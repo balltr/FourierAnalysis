@@ -1,0 +1,9 @@
+\contentsline {section}{\numberline {1}Introduction to Fourier Analysis}{2}
+\contentsline {section}{\numberline {2}Fourier Analysis of Semi-Discrete 1D Heat Equation}{2}
+\contentsline {section}{\numberline {3}Fourier Analysis of Semi-Discrete 1D Wave Equation}{3}
+\contentsline {section}{\numberline {4}Fourier Analysis of 1D DGFEM Wave Equation}{5}
+\contentsline {section}{\numberline {5}1D Euler Equations}{6}
+\contentsline {section}{\numberline {6}2D Euler Equations}{7}
+\contentsline {section}{\numberline {7}2D Euler Equations with Shock}{8}
+\contentsline {subsection}{\numberline {7.1}Non-Shock Layer Nodes}{9}
+\contentsline {subsection}{\numberline {7.2}Evolution Equation for Shock Point}{10}
