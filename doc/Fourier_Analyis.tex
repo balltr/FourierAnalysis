@@ -327,7 +327,7 @@
 		|A| = V*|E|*V^{-1}
 	\end{equation}
 
-	It is convenient to define Fourier operators for the derivatives in the $x$ direction. For the first and second derivatives, we can use:
+	It is convenient to define Fourier operators for the derivatives in the $x$ direction. Using central differencing for the first and second derivatives, we can use:
 	
 	$$
 	\frac{\partial}{\partial x} = \frac{i sin(k \Delta x)}{\Delta x}
@@ -680,10 +680,13 @@
 	Now subtracting  equations (\ref{shock_term2_pt1}) and (\ref{shock_term2_pt2}) and taking only the first order terms of $\epsilon$ yields
 	
 	\begin{equation} \label{moving_domain_equation_term3}
-		\frac{\partial}{\partial \eta} (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})) = \epsilon \frac{\mathbf{u}_u \bar{\mathbf{w}}}{2} \left( \frac{\partial y'}{\partial \xi} \right)_N - \epsilon \frac{\mathbf{A}_y \Delta x}{2} \left( \frac{\mathbf{w}_N' + \mathbf{w}_{N-1}'}{2} \right) + \epsilon \frac{|\mathbf{A}_y| \Delta x}{4} ( \mathbf{w}_N' - \mathbf{w}_{N-1}')
+		\frac{\partial}{\partial \eta} (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})) = 
+		\epsilon \frac{\mathbf{u}_u \bar{\mathbf{w}}}{2} \left( \frac{\partial y'}{\partial \xi} \right)_N 
+		- \epsilon \frac{\mathbf{A}_y \Delta x}{2} \left( \frac{\mathbf{w}_N' + \mathbf{w}_{N-1}'}{2} \right) 
+		+ \epsilon \frac{|\mathbf{A}_y| \Delta x}{4} ( \mathbf{w}_N' - \mathbf{w}_{N-1}')
 	\end{equation}
 	
-	We can now put equations (\ref{moving_domain_equation_term1}), (\ref{moving_domain_equation_term2}) and (\ref{moving_domain_equation_term3}) into (\ref{moving_domain_equation}) and solve for $\frac{\partial \mathbf{w}'}{\partial \tau}$
+	We can now put equations (\ref{moving_domain_equation_term1}), (\ref{moving_domain_equation_term2}) and (\ref{moving_domain_equation_term3}) into (\ref{moving_domain_equation}) and solve for $\frac{\partial \mathbf{w}'}{\partial \tau}$. Using a central difference for $\left( \frac{\partial y'}{\partial \xi} \right)_N $, we get
 		
 	\begin{multline}
 		\frac{\partial \mathbf{w}'}{\partial \tau} = 
@@ -693,7 +696,22 @@
 		+ \frac{\mathbf{A}_y}{\Delta y} (\mathbf{w}_N' + \mathbf{w}_{N-1}')
 		- \frac{|\mathbf{A}|_y}{\Delta y} (\mathbf{w}_N' - \mathbf{w}_{N-1}')
 	\end{multline}
-
+	
+	 It is convenient to isolate the coefficients belonging to neighboring coefficients in the y-direction. They are described as follows:
+	
+	The coefficients for $\mathbf{w}_N'$ are
+	
+	$$ - 2 \left( \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2 \Delta x}\right) - \frac{|\mathbf{A}_x| \Delta x}{2} \left( \frac{\mathbf{w}_{i+1}' - 2 \mathbf{w}_i' + \mathbf{w}_{i-1}'}{(\Delta x)^2} \right) \right) + \frac{\mathbf{A}_y - |\mathbf{A}_y|}{\Delta y} $$
+	
+	The coefficients for $\mathbf{w}_{N-1}'$ are
+	
+	$$ \frac{\mathbf{A}_y + |\mathbf{A}_y|}{\Delta y} $$
+	
+	The coefficients for $y_N'$ are
+	
+	$$ -\frac{4 \mathbf{F}_{x}(\bar{\mathbf{w}})}{\Delta y}    \left( \frac{y_{i+1}' - y_{i-1}'}{2 \Delta x} \right) $$
+	
+	We can now plot the eigenvalues of this equation using Fourier analysis in the x-direction. 
 	
 
 \end{document}
