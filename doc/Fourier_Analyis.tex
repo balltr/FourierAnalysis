@@ -572,9 +572,9 @@
 	
 	After considering only the first order terms of the perturbation, the first term of equation (\ref{moving_domain_equation}) becomes
 	
-	$$ \frac{\partial (|\mathbf{J}| \mathbf{w})}{\partial \tau} = \frac{\partial}{\partial \tau} (x_\xi (\bar{y}_N + \epsilon y' - y_{N-\frac{1}{2}}) (\bar{\mathbf{w}} + \epsilon \mathbf{w}')) = \bar{\mathbf{w}} x_\xi \frac{\partial}{\partial \tau}(y') + x_\xi y_\eta \frac{\partial}{\partial \tau} (\mathbf{w}') $$
-	
-	***** $\bar{\mathbf{w}} x_\xi \frac{\partial}{\partial \tau}(y')$ IS NOT IN PAPER NOTES AND NOT INCLUDED IN CODE *****
+	\begin{equation} \label{moving_domain_equation_term1}
+		\frac{\partial (|\mathbf{J}| \mathbf{w})}{\partial \tau} = \frac{\partial}{\partial \tau} (x_\xi (\bar{y}_N + \epsilon y' - y_{N-\frac{1}{2}}) (\bar{\mathbf{w}} + \epsilon \mathbf{w}')) = \bar{\mathbf{w}} x_\xi \frac{\partial}{\partial \tau}(y') + x_\xi y_\eta \frac{\partial}{\partial \tau} (\mathbf{w}')
+	\end{equation}
 	
 	\begin{figure}[h]
 		\includegraphics[width=6cm]{shock_point_x}
@@ -613,8 +613,12 @@
 	
 	Now subtracting the two equations above yields
 	
-	\begin{equation}
-		\frac{\partial}{\partial \xi} (y_\eta \mathbf{F}_x) = (\bar{y}_N - y_{N-\frac{1}{2}}) \left( \epsilon \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2}\right) - \epsilon \frac{|\mathbf{A}_x|}{2} ( \mathbf{w}_{i+1}' - 2\mathbf{w}_i' + \mathbf{w}_{i-1}') \right) + \epsilon \mathbf{F}_{x}(\bar{\mathbf{w}}) \left( \frac{y_{i+1}' - y_{i-1}'}{2} \right)
+	\begin{equation} \label{moving_domain_equation_term2}
+		\frac{\partial}{\partial \xi} (y_\eta \mathbf{F}_x) = 
+		(\bar{y}_N - y_{N-\frac{1}{2}}) 
+		\left( \epsilon \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2}\right) 
+	    - \epsilon \frac{|\mathbf{A}_x|}{2} ( \mathbf{w}_{i+1}' - 2 \mathbf{w}_i' + \mathbf{w}_{i-1}') \right) 
+	    + \epsilon \mathbf{F}_{x}(\bar{\mathbf{w}}) \left( \frac{y_{i+1}' - y_{i-1}'}{2} \right)
 	\end{equation}
 	
 	\begin{figure}[h]
@@ -634,7 +638,7 @@
 	
 	$$ y_{\tau,N} = \bar{y}_{\tau,N} + \epsilon y'_{\tau,N} = \epsilon y'_{\tau,N} = - \epsilon \mathbf{u}_u \frac{1}{\Delta x} \left( \frac{\partial y'}{\partial \xi} \right)_N $$
 	
-	*************** INSERT SHOCK INTERFACE MOTION WAVE EQUATION FOR REFERENCE *************
+	******* INSERT SHOCK INTERFACE MOTION WAVE EQUATION FOR REFERENCE *******
 	
 	Since $\mathbf{F}_{y,N}$ lies directly on a mesh node,
 	
@@ -675,12 +679,21 @@
 	
 	Now subtracting  equations (\ref{shock_term2_pt1}) and (\ref{shock_term2_pt2}) and taking only the first order terms of $\epsilon$ yields
 	
-	\begin{equation}
+	\begin{equation} \label{moving_domain_equation_term3}
 		\frac{\partial}{\partial \eta} (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})) = \epsilon \frac{\mathbf{u}_u \bar{\mathbf{w}}}{2} \left( \frac{\partial y'}{\partial \xi} \right)_N - \epsilon \frac{\mathbf{A}_y \Delta x}{2} \left( \frac{\mathbf{w}_N' + \mathbf{w}_{N-1}'}{2} \right) + \epsilon \frac{|\mathbf{A}_y| \Delta x}{4} ( \mathbf{w}_N' - \mathbf{w}_{N-1}')
 	\end{equation}
 	
-	
-	
+	We can now put equations (\ref{moving_domain_equation_term1}), (\ref{moving_domain_equation_term2}) and (\ref{moving_domain_equation_term3}) into (\ref{moving_domain_equation}) and solve for $\frac{\partial \mathbf{w}'}{\partial \tau}$
+		
+	\begin{multline}
+		\frac{\partial \mathbf{w}'}{\partial \tau} = 
+		%\frac{2 \bar{\mathbf{w}} \mathbf{u}_u}{\Delta x \Delta y} \left( \frac{\partial y'}{\partial \xi} \right)_N 
+		- 2 \left( \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2 \Delta x}\right) - \frac{|\mathbf{A}_x| \Delta x}{2} \left( \frac{\mathbf{w}_{i+1}' - 2 \mathbf{w}_i' + \mathbf{w}_{i-1}'}{(\Delta x)^2} \right) \right)
+		\\ - \frac{4 \mathbf{F}_{x}(\bar{\mathbf{w}})}{\Delta y}    \left( \frac{y_{i+1}' - y_{i-1}'}{2 \Delta x} \right)
+		+ \frac{\mathbf{A}_y}{\Delta y} (\mathbf{w}_N' + \mathbf{w}_{N-1}')
+		- \frac{|\mathbf{A}|_y}{\Delta y} (\mathbf{w}_N' - \mathbf{w}_{N-1}')
+	\end{multline}
+
 	
 
 \end{document}
