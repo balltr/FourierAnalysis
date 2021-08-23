@@ -581,9 +581,9 @@
 		\centering
 	\end{figure}
 	
-	The second term of equation (\ref{moving_domain_equation}) can be approximated by taking the difference of the midpoints between the adjacent cells as shown above.
+	The second term of equation (\ref{moving_domain_equation}) can be approximated by taking the difference of the midpoints between the adjacent cells as shown above since we know the flux at the edge of the cells.
 	
-	$$ \frac{\partial}{\partial \xi} (y_\eta \mathbf{F}_x) =  (y_\eta \mathbf{F}_x)_{i+\frac{1}{2}} - (y_\eta \mathbf{F}_x)_{i-\frac{1}{2}} $$
+	$$ \frac{\partial}{\partial \xi} (y_\eta \mathbf{F}_x)_i =  (y_\eta \mathbf{F}_x)_{i+\frac{1}{2}} - (y_\eta \mathbf{F}_x)_{i-\frac{1}{2}} $$
 	
 	Using an upwind flux, $\mathbf{F}_{x,i+\frac{1}{2}}$ can be written as
 	
@@ -622,19 +622,19 @@
 		\centering
 	\end{figure}
 	
-	The third term of equation (\ref{moving_domain_equation}) can be approximated by taking the difference of the top cell and the midpoint of the cell below.
+	The third term of equation (\ref{moving_domain_equation}) can be approximated by taking the difference between the top and bottom face of the half cell at the top of the domain.
 	
 	$$ \frac{\partial}{\partial \eta} (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})) =  (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N} - (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N-\frac{1}{2}} $$
 	
-	Since here we are using a half cell, 
+	Since $\xi$ goes from -1 to 1 in a cell,
 	
-	$$ x_{\xi,N} = x_{\xi, N-\frac{1}{2}} = \frac{\Delta x}{2} $$
-	
-	*************** SHOULD THIS BE $\Delta x$? ***********
+	$$ x_{\xi}= \frac{\Delta x}{2} $$
 	
 	Using a small perturbation of $y_N = \bar{y}_N + \epsilon y'$ and equation (\ref{}), 
 	
 	$$ y_{\tau,N} = \bar{y}_{\tau,N} + \epsilon y'_{\tau,N} = \epsilon y'_{\tau,N} = - \epsilon \mathbf{u}_u \frac{1}{\Delta x} \left( \frac{\partial y'}{\partial \xi} \right)_N $$
+	
+	*************** INSERT SHOCK INTERFACE MOTION WAVE EQUATION FOR REFERENCE *************
 	
 	Since $\mathbf{F}_{y,N}$ lies directly on a mesh node,
 	

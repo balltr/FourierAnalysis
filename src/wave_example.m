@@ -307,6 +307,8 @@ for k = -pi:pi/20:pi
     wRHSM1 = 1/(4*dy)*(Af+absAf);
     wRHS = -1/2*(Ae*ddx-adis*absAe/2*d2dx) + 1/(4*dy)*(Af-absAf);
     %   rhsp1 = zeros(numVar);
+    
+    %%%%%%%%%%% POSITIVE REAL EIGENVALUES ARE COMING FROM HERE %%%%%%%%%%%
 
     Mat(end-numVar+1:end,end-numVar+1:end) = wRHS;
     Mat(end-numVar+1:end,end-2*numVar+1:end-numVar) = wRHSM1;
@@ -325,6 +327,7 @@ for k = -pi:pi/20:pi
     % for y'
     yRHS = -(eEval/dy+u*w/(2*dx*dy))*ddx_y;
     Mat((Ny-1)*numVar+1:Ny*numVar, Ny*numVar+1) = yRHS;
+    % this comes from wave equation of y'
     Mat(Ny*numVar+1,Ny*numVar+1) = -u/dx*ddx_y;
 
     [V,E] = eig(Mat);
