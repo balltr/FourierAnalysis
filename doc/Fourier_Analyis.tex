@@ -388,8 +388,8 @@
 	$${\mathbf{F_x} (\mathbf{w})} = \left[
 	\begin{tabular}{c}
 		$w_2$\ \\
-		$w^2_2/w_1+(\gamma-1)*(w_4-0.5*(w^2_2+w^2_3)/w_1)$ \\
-		$ w_2*w_3/w_1$ \\
+		$\frac{w^2_2}{w_1}+(\gamma-1)(w_4-\frac{1}{2}(w^2_2+w^2_3)/w_1)$ \\
+		$ w_2 w_3/w_1$ \\
 		$w_2/w_1*(w_4+(\gamma-1)*(w_4-0.5*(w^2_2+w^2_3)/w_1))$ 
 	\end{tabular}
 	\right]
@@ -432,7 +432,7 @@
 	Similar to the 1D Euler equations, we can upwind equation (\ref{2D_euler_linearized}) using artificial diffusion as follows:
 	
 	\begin{equation} \label{2D_euler_upwind}
-		\frac{\partial \mathbf{w}}{\partial t} = - \left( A_x \frac{\partial \mathbf{w}}{\partial x} - adis * \frac{|A_x|}{2} \left( \frac{\partial^2 \mathbf{w}}{\partial x^2} \right) \right) - \left( A_y \frac{\partial \mathbf{w}}{\partial y} - adis * \frac{|A_y|}{2} \left( \frac{\partial^2 \mathbf{w}}{\partial y^2} \right) \right)
+		\frac{\partial \mathbf{w}}{\partial t} = - \left( A_x \frac{\partial \mathbf{w}}{\partial x} - adis * \frac{|A_x| \Delta x}{2} \left( \frac{\partial^2 \mathbf{w}}{\partial x^2} \right) \right) - \left( A_y \frac{\partial \mathbf{w}}{\partial y} - adis * \frac{|A_y| \Delta y}{2} \left( \frac{\partial^2 \mathbf{w}}{\partial y^2} \right) \right)
 	\end{equation}
 	
 	Here, the Fourier operators can be used on the $x$ direction derivatives, however a central difference will be used for the $y$ direction derivatives. This will result in a block tri-diagonal matrix for which the eigenvalues can be calculated and plotted. For this case, periodic boundary conditions are used for all sides of a uniform, rectangular domain. The eigenvalues of the right hand side of (\ref{2D_euler_upwind}) can be calculated for $-\pi<k<\pi$ using the Fourier operators similarly to the 1D Euler equations. 
@@ -550,7 +550,7 @@
 	\mathbf{w}_\tau  + \frac{\partial \mathbf{F}_x}{\partial \mathbf{w}} \frac{\partial \mathbf{w}}{\partial x}+ \frac{\partial \mathbf{F}_y}{\partial \mathbf{w}} \frac{\partial \mathbf{w}}{\partial y} = 0
 	\end{equation}
 
-	Using a small perturbation of $\mathbf{w} = \bar{\mathbf{w}} + \epsilon \mathbf{w}'$, equation (\ref{curvilinear_interior_linearized}) can be Taylor Expanded. Considering only the first order terms of the perturbation yields
+	Using a small perturbation of $\mathbf{w} = \bar{\mathbf{w}} + \epsilon \mathbf{w}'$, equation (\ref{curvilinear_interior_linearized}) can be Taylor expanded. Considering only the first order terms of the perturbation yields
 	
 	$$ \mathbf{w}'_\tau  + \left. \frac{\partial \mathbf{F}_x}{\partial \mathbf{w}} \right|_{\bar{\mathbf{w}}} \frac{\partial \mathbf{w}'}{\partial x} + \left. \frac{\partial \mathbf{F}_y}{\partial \mathbf{w}} \right|_{\bar{\mathbf{w}}} \frac{\partial \mathbf{w}'}{\partial y} = 0 $$
 	
@@ -640,18 +640,22 @@
 	
 	******* INSERT SHOCK INTERFACE MOTION WAVE EQUATION FOR REFERENCE *******
 	
+	**** INSERT DISCRETE FORM AND DISCUSS OPTIONS -- UPWIND AND CENTRAL ****
+	
 	Since $\mathbf{F}_{y,N}$ lies directly on a mesh node,
 	
-	$$ \mathbf{F}_{y,N} = \mathbf{F}_{y}(\bar{\mathbf{w}}_N) $$
+	$$ \mathbf{F}_{y,N} = \mathbf{F}_{y}(\mathbf{w}_N) = \mathbf{F}_{y}(\bar{\mathbf{w}}) + \mathbf{A}_y \mathbf{w}'_N$$
 	
-	Now using a small perturbation of $\mathbf{w} = \bar{\mathbf{w}} + \epsilon \mathbf{w}'$,
+	******** THIS WAS CHANGED, CARRY IT THROUGH BELOW *********
+	
+	Now using a small perturbation of $\mathbf{w}_N = \bar{\mathbf{w}} + \epsilon \mathbf{w}'_N$,
 	
 	% THIS EQUATION USES A CENTRAL DIFFFERENCE FOR Y
 	
 	% $$ (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N} = \frac{\Delta x}{2} \left( \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \mathbf{u}_u \frac{1}{\Delta x} \left( \frac{y'_{i+1} - y'_{i-1}}{2 \Delta x} \right) (\bar{\mathbf{w}}_N + \epsilon \mathbf{w}'_N) \right) $$
 	
 	\begin{equation} \label{shock_term2_pt1}
-		(x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N} = \frac{\Delta x}{2} \left( \mathbf{F}_{y}(\bar{\mathbf{w}}_N) + \epsilon \mathbf{u}_u \frac{1}{\Delta x} \left( \frac{\partial y'}{\partial \xi} \right)_N (\bar{\mathbf{w}}_N + \epsilon \mathbf{w}'_N) \right)
+		(x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N} = \frac{\Delta x}{2} \left( \mathbf{F}_{y}(\bar{\mathbf{w}}) + \mathbf{A}_y \mathbf{w}'_N + \epsilon \mathbf{u}_u \frac{1}{\Delta x} \left( \frac{\partial y'}{\partial \xi} \right)_N (\bar{\mathbf{w}}_N + \epsilon \mathbf{w}'_N) \right)
 	\end{equation}
 	
 	

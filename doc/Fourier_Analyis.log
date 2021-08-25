@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  23 AUG 2021 14:53
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  25 AUG 2021 11:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -325,6 +325,12 @@ Overfull \hbox (30.95529pt too wide) in paragraph at lines 641--642
 REF-ER-ENCE ******* 
  []
 
+
+Overfull \hbox (13.17635pt too wide) in paragraph at lines 643--644
+[]\OT1/cmr/m/n/10 **** IN-SERT DIS-CRETE FORM AND DIS-CUSS OP-TIONS -- UP-WIND 
+AND CEN-TRAL **** 
+ []
+
 [11 <./images/shock_point_y.jpg>] [12] (./Fourier_Analyis.aux)
 
 LaTeX Warning: There were undefined references.
@@ -354,7 +360,7 @@ ive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive
 18/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/201
 8/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/2018/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on Fourier_Analyis.pdf (12 pages, 964066 bytes).
+Output written on Fourier_Analyis.pdf (12 pages, 964849 bytes).
 PDF statistics:
  114 PDF objects out of 1000 (max. 8388607)
  76 compressed objects within 1 object stream
