@@ -303,12 +303,10 @@ for k = -pi:pi/20:pi
     Mat = full(blktridiag(rhs,rhsm1,rhsp1,Ny));
     Mat(end-numVar+1:end,:) = 0; % zeros bottom entries for shock boundary
 
-    %%%%%%%%%%% POSITIVE REAL EIGENVALUES ARE COMING FROM wRHSM1 %%%%%%%%%%%
     % Moving shock BC on top
     wRHSM1 = 1/dy*(Af+absAf);
-    wRHS = -2*(Ae*ddx-adis*absAe*dx/2*d2dx) + 1/dy*(Af-absAf);
+    wRHS = -2*(Ae*ddx-adis*absAe*dx/2*d2dx) - 2*Af/dy + 1/dy*(Af-absAf);
     %   rhsp1 = zeros(numVar);
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
 
     Mat(end-numVar+1:end,end-numVar+1:end) = wRHS;
     Mat(end-numVar+1:end,end-2*numVar+1:end-numVar) = wRHSM1;

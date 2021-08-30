@@ -449,6 +449,8 @@
 	
 	INSERT DIAGRAM OF MESH WITH UPSTREAM, DOWNSTREAM AND SHOCK POSITION LABELED.
 	
+	ANALOGOUS TO A VERTEX BASED FINITE VOLUME FORMULATION
+	
 	Here, we will introduce a horizontal oblique shock to the top boundary of the 2D rectangular domain. The governing equations for the 2D Euler conservative variables remain the same, however we will need to solve an evolution equation for the nodes aligned with the shock. All of the nodes will remain fixed except for the nodes that are aligned with the shock which can move slightly up or down in the $y$ direction.
 	
 	Since the governing equations (\ref{2D_euler}) will be solved on a moving domain, it is convenient to write them in unsteady curvilinear coordinates as follows:
@@ -460,13 +462,13 @@
 	Introducing the Jacobian matrix of the coordinate transformation, $J_{ij} = \frac{\partial x_i}{\partial \xi_j}$ , the Jacobian determinant, $|J|$, and the domain velocity, $x_{i,\tau} = \frac{\partial x_i}{\partial \tau}$ , the governing equations can be written in curvilinear coordinates as
 	
 	\begin{equation} \label{curvilinear}
-		\frac{\partial (|\mathbf{J}| \mathbf{w})}{\partial \tau} + \frac{\partial \tilde{\mathbf{F}_j}}{\partial \xi_j} = 0,
+		\frac{\partial (|\mathbf{J}| \mathbf{w})}{\partial \tau} + \frac{\partial \tilde{\mathbf{F}}_j}{\partial \xi_j} = 0,
 	\end{equation}
 	
 	where the effective flux $\tilde{\mathbf{F}}$ is defined as
 	
 	\begin{equation} \label{effective_flux}
-		\tilde{\mathbf{F}_i} = |\mathbf{J}| \mathbf{J}_{ij}^{-1}(\mathbf{F}_j - \mathbf{w}x_{j,\tau}).
+		\tilde{\mathbf{F}}_i = |\mathbf{J}| \mathbf{J}_{ij}^{-1}(\mathbf{F}_j - \mathbf{w}x_{j,\tau}).
 	\end{equation}
 		
 	 Equations (\ref{curvilinear}) and (\ref{effective_flux}) account for domain motion in both the $x$ and $y$ directions, however these can be simplified for the case where there is only motion in the $y$ direction.
@@ -505,9 +507,9 @@
 	 
 	 The simplified effective fluxes become
 	 
-	 $$ \tilde{\mathbf{F}_x} = y_\eta \mathbf{F}_x $$
+	 $$ \tilde{\mathbf{F}}_x = y_\eta \mathbf{F}_x $$
 	 
-	 $$ \tilde{\mathbf{F}_y}= x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}) $$
+	 $$ \tilde{\mathbf{F}}_y= x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}) $$
 	 
 	 Substituting these simplifications and effective fluxes into equation (\ref{curvilinear}) yields
 	 
@@ -519,32 +521,25 @@
 	 
 	 Equation (\ref{moving_domain_equation}) can be further simplified to
 	 
-	 $$ x_\xi \frac{\partial}{\partial \tau} \left( y_\eta \mathbf{w} \right) + \frac{\partial}{\partial \xi} \tilde{\mathbf{F}_x} + \frac{\partial}{\partial \eta} \tilde{\mathbf{F}_y} = 0 $$
+	 $$ x_\xi \frac{\partial}{\partial \tau} \left( y_\eta \mathbf{w} \right) + \frac{\partial}{\partial \xi} \tilde{\mathbf{F}}_x + \frac{\partial}{\partial \eta} \tilde{\mathbf{F}}_y = 0 $$
 	 
 	 $$ x_\xi \frac{\partial}{\partial \tau} \left( y_\eta \mathbf{w} \right) + \frac{\partial}{\partial \xi} (y_\eta \mathbf{F}_x) + \frac{\partial}{\partial \eta} (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})) = 0$$
 	 
 	 $$ x_\xi (y_{\eta \tau} \mathbf{w} + y_\eta \mathbf{w}_\tau) + y_\eta \frac{\partial}{\partial \xi} \mathbf{F}_x + x_\xi \left(\frac{\partial}{\partial \eta} \mathbf{F}_y - y_{\eta \tau} \mathbf{w} - y_\tau \mathbf{w}_\eta \right) = 0$$
 	 
-	 For all of the nodes below the shock layer, $y_{\eta \tau} = 0$
+	 For all of the nodes below the shock layer, $y_{\tau} = 0$
 	 
-	 $$ x_\xi y_\eta \mathbf{w}_\tau + y_\eta \frac{\partial \mathbf{F}_x}{\partial \xi} + x_\xi \frac{\partial \mathbf{F}_y}{\partial \eta} - x_\xi y_\tau \mathbf{w}_\eta = 0 $$
+	 $$ x_\xi y_\eta \mathbf{w}_\tau + y_\eta \frac{\partial \mathbf{F}_x}{\partial \xi} + x_\xi \frac{\partial \mathbf{F}_y}{\partial \eta} = 0 $$
 	 
 	 Dividing by the Jacobian $x_\xi y_\eta$ yields
 	 
-	 $$ \mathbf{w}_\tau + \frac{1}{x_\xi} \frac{\partial \mathbf{F}_x}{\partial \xi} + \frac{1}{y_\eta} \frac{\partial \mathbf{F}_y}{\partial \eta} - y_\tau \frac{1}{y_\eta} \mathbf{w}_\eta = 0 $$
+	 $$ \mathbf{w}_\tau + \frac{1}{x_\xi} \frac{\partial \mathbf{F}_x}{\partial \xi} + \frac{1}{y_\eta} \frac{\partial \mathbf{F}_y}{\partial \eta} = 0 $$
 	 
 	 The spacial curvilinear coordinates can be converted back to Cartesian coordinates and equation (\ref{curvilinear}) can be written as
 	 
-	 \begin{equation} \label{curvilinear2}
-	 	\mathbf{w}_\tau  - y_\tau \mathbf{w}_y + \frac{\partial \mathbf{F}_x}{\partial x} + \frac{\partial \mathbf{F}_y}{\partial y} = 0
-	 \end{equation}
+	 $$	\mathbf{w}_\tau + \frac{\partial \mathbf{F}_x}{\partial x} + \frac{\partial \mathbf{F}_y}{\partial y} = 0 $$
 	
-	For all the nodes below the shock layer, $y_\tau = 0$. For these nodes, equation (\ref{curvilinear2}) reduces to 
-	
-	$$ \mathbf{w}_\tau  + \frac{\partial \mathbf{F}_x}{\partial x} + \frac{\partial \mathbf{F}_y}{\partial y} = 0 $$
-	
-	
-	which can be linearized as follows
+	which can be linearized to
 	
 	\begin{equation} \label{curvilinear_interior_linearized}
 	\mathbf{w}_\tau  + \frac{\partial \mathbf{F}_x}{\partial \mathbf{w}} \frac{\partial \mathbf{w}}{\partial x}+ \frac{\partial \mathbf{F}_y}{\partial \mathbf{w}} \frac{\partial \mathbf{w}}{\partial y} = 0
@@ -560,6 +555,8 @@
 		\mathbf{w}'_\tau  + \mathbf{A}_x \frac{\partial \mathbf{w}'}{\partial x} + \mathbf{A}_y \frac{\partial \mathbf{w}'}{\partial y} = 0
 	\end{equation}
 	
+	***** INSERT DISCRETE FORMULATIONS OF EQUATION (\ref{curvilinear_interior_expanded}) *****
+	
 	\subsection{Evolution Equation for Shock Point}
 	
 	************* INSERT DIAGRAM OF NODE LOCATIONS WITH N, N-1/2 AND N-1. LABEL UPSTREAM, DOWNSTREAM, AND SHOCK LOCATION  *************
@@ -573,7 +570,7 @@
 	After considering only the first order terms of the perturbation, the first term of equation (\ref{moving_domain_equation}) becomes
 	
 	\begin{equation} \label{moving_domain_equation_term1}
-		\frac{\partial (|\mathbf{J}| \mathbf{w})}{\partial \tau} = \frac{\partial}{\partial \tau} (x_\xi (\bar{y}_N + \epsilon y' - y_{N-\frac{1}{2}}) (\bar{\mathbf{w}} + \epsilon \mathbf{w}')) = \bar{\mathbf{w}} x_\xi \frac{\partial}{\partial \tau}(y') + x_\xi y_\eta \frac{\partial}{\partial \tau} (\mathbf{w}')
+		\frac{\partial (|\mathbf{J}| \mathbf{w})}{\partial \tau} = \frac{\partial}{\partial \tau} (x_\xi (\bar{y}_N + \epsilon y' - y_{N-\frac{1}{2}}) (\bar{\mathbf{w}} + \epsilon \mathbf{w}')) = \bar{\mathbf{w}} x_\xi \frac{\partial}{\partial \tau}(y') + x_\xi y_\eta \frac{\partial}{\partial \tau} (\mathbf{w}') + O(\epsilon^2)
 	\end{equation}
 	
 	\begin{figure}[h]
@@ -598,6 +595,10 @@
 	$$ \mathbf{F}_{x,i}(\bar{\mathbf{w}} + \epsilon \mathbf{w}') = \mathbf{F}_{x}(\bar{\mathbf{w}}) + A_x \epsilon \mathbf{w}_i' $$
 	
 	$$ \mathbf{F}_{x,i+1}(\bar{\mathbf{w}} + \epsilon \mathbf{w}') = \mathbf{F}_{x}(\bar{\mathbf{w}}) + A_x \epsilon \mathbf{w}_{i+1}' $$
+	
+	Now,
+	
+	$$ \mathbf{F}_{x,i+\frac{1}{2}} = \mathbf{F}_{x}(\bar{\mathbf{w}}) + \epsilon \mathbf{A}_x \left( \frac{\mathbf{w}_i' + \mathbf{w}_{i+1}'}{2}\right) - \epsilon \frac{|\mathbf{A}_x|}{2} ( \mathbf{w}_{i+1}' - \mathbf{w}_i') $$
 	
 	$y_{\eta,i+\frac{1}{2}}$ can be approximated as the average of $y_{\eta, i}$ and $y_{\eta, i+1}$. Combining this will a small perturbation of $y_N = \bar{y}_N + \epsilon y'$,
 	
@@ -636,26 +637,22 @@
 	
 	Using a small perturbation of $y_N = \bar{y}_N + \epsilon y'$ and equation (\ref{}), 
 	
-	$$ y_{\tau,N} = \bar{y}_{\tau,N} + \epsilon y'_{\tau,N} = \epsilon y'_{\tau,N} = - \epsilon \mathbf{u}_u \frac{1}{\Delta x} \left( \frac{\partial y'}{\partial \xi} \right)_N $$
+	$$ y_{\tau,N} = \epsilon y'_{\tau,N} = - \epsilon \mathbf{u}_u \frac{1}{\Delta x} \left( \frac{\partial y'}{\partial \xi} \right)_N $$
 	
 	******* INSERT SHOCK INTERFACE MOTION WAVE EQUATION FOR REFERENCE *******
 	
-	**** INSERT DISCRETE FORM AND DISCUSS OPTIONS -- UPWIND AND CENTRAL ****
+	**** INSERT DISCRETE FORMS AND DISCUSS OPTIONS -- UPWIND AND CENTRAL ****
 	
 	Since $\mathbf{F}_{y,N}$ lies directly on a mesh node,
 	
-	$$ \mathbf{F}_{y,N} = \mathbf{F}_{y}(\mathbf{w}_N) = \mathbf{F}_{y}(\bar{\mathbf{w}}) + \mathbf{A}_y \mathbf{w}'_N$$
+	$$ \mathbf{F}_{y,N} = \mathbf{F}_{y}(\mathbf{w}_N) = \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \mathbf{A}_y \mathbf{w}'_N$$
 	
 	******** THIS WAS CHANGED, CARRY IT THROUGH BELOW *********
 	
 	Now using a small perturbation of $\mathbf{w}_N = \bar{\mathbf{w}} + \epsilon \mathbf{w}'_N$,
 	
-	% THIS EQUATION USES A CENTRAL DIFFFERENCE FOR Y
-	
-	% $$ (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N} = \frac{\Delta x}{2} \left( \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \mathbf{u}_u \frac{1}{\Delta x} \left( \frac{y'_{i+1} - y'_{i-1}}{2 \Delta x} \right) (\bar{\mathbf{w}}_N + \epsilon \mathbf{w}'_N) \right) $$
-	
 	\begin{equation} \label{shock_term2_pt1}
-		(x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N} = \frac{\Delta x}{2} \left( \mathbf{F}_{y}(\bar{\mathbf{w}}) + \mathbf{A}_y \mathbf{w}'_N + \epsilon \mathbf{u}_u \frac{1}{\Delta x} \left( \frac{\partial y'}{\partial \xi} \right)_N (\bar{\mathbf{w}}_N + \epsilon \mathbf{w}'_N) \right)
+		(x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N} = \frac{\Delta x}{2} \left( \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \mathbf{A}_y \mathbf{w}'_N + \epsilon \mathbf{u}_u \frac{1}{\Delta x} \left( \frac{\partial y'}{\partial \xi} \right)_N (\bar{\mathbf{w}} + \epsilon \mathbf{w}'_N) \right)
 	\end{equation}
 	
 	
@@ -669,11 +666,11 @@
 	
 	We can now Taylor expand $\mathbf{F}_{y,N}(\mathbf{w})$ and $\mathbf{F}_{y,N-1}(\mathbf{w})$. Taking the first order terms of $\epsilon$,
 	
-	$$ \mathbf{F}_{y,N}(\bar{\mathbf{w}} + \epsilon \mathbf{w}') = \mathbf{F}_{y}(\bar{\mathbf{w}}) + A_y \epsilon \mathbf{w}_N' $$
+	$$ \mathbf{F}_{y,N}(\bar{\mathbf{w}} + \epsilon \mathbf{w}_N') = \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \mathbf{A_y} \mathbf{w}_N' $$
 	
-	$$ \mathbf{F}_{y,N-1}(\bar{\mathbf{w}} + \epsilon \mathbf{w}') = \mathbf{F}_{y}(\bar{\mathbf{w}}) + A_y \epsilon \mathbf{w}_{N-1}' $$
+	$$ \mathbf{F}_{y,N-1}(\bar{\mathbf{w}} + \epsilon \mathbf{w}'_{N-1}) = \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \mathbf{A_y} \epsilon \mathbf{w}_{N-1}' $$
 	
-	Since only the top layer of the mesh is allowed to move, $y_{\tau,N-\frac{1}{2}}=0$
+	Since only the top layer of the mesh is free to move, $y_{\tau,N-\frac{1}{2}}=0$
 	
 	Now,
 	
@@ -685,7 +682,8 @@
 	
 	\begin{equation} \label{moving_domain_equation_term3}
 		\frac{\partial}{\partial \eta} (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})) = 
-		\epsilon \frac{\mathbf{u}_u \bar{\mathbf{w}}}{2} \left( \frac{\partial y'}{\partial \xi} \right)_N 
+		\epsilon \frac{\mathbf{A}_y \Delta x \mathbf{w}'_N}{2}
+		+ \epsilon \frac{\mathbf{u}_u \bar{\mathbf{w}}}{2} \left( \frac{\partial y'}{\partial \xi} \right)_N 
 		- \epsilon \frac{\mathbf{A}_y \Delta x}{2} \left( \frac{\mathbf{w}_N' + \mathbf{w}_{N-1}'}{2} \right) 
 		+ \epsilon \frac{|\mathbf{A}_y| \Delta x}{4} ( \mathbf{w}_N' - \mathbf{w}_{N-1}')
 	\end{equation}
@@ -697,6 +695,7 @@
 		%\frac{2 \bar{\mathbf{w}} \mathbf{u}_u}{\Delta x \Delta y} \left( \frac{\partial y'}{\partial \xi} \right)_N 
 		- 2 \left( \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2 \Delta x}\right) - \frac{|\mathbf{A}_x| \Delta x}{2} \left( \frac{\mathbf{w}_{i+1}' - 2 \mathbf{w}_i' + \mathbf{w}_{i-1}'}{(\Delta x)^2} \right) \right)
 		\\ - \frac{4 \mathbf{F}_{x}(\bar{\mathbf{w}})}{\Delta y}    \left( \frac{y_{i+1}' - y_{i-1}'}{2 \Delta x} \right)
+		- \frac{2 \mathbf{A}_y \mathbf{w}_N'}{\Delta y}
 		+ \frac{\mathbf{A}_y}{\Delta y} (\mathbf{w}_N' + \mathbf{w}_{N-1}')
 		- \frac{|\mathbf{A}|_y}{\Delta y} (\mathbf{w}_N' - \mathbf{w}_{N-1}')
 	\end{multline}
@@ -705,7 +704,7 @@
 	
 	The coefficients for $\mathbf{w}_N'$ are
 	
-	$$ - 2 \left( \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2 \Delta x}\right) - \frac{|\mathbf{A}_x| \Delta x}{2} \left( \frac{\mathbf{w}_{i+1}' - 2 \mathbf{w}_i' + \mathbf{w}_{i-1}'}{(\Delta x)^2} \right) \right) + \frac{\mathbf{A}_y - |\mathbf{A}_y|}{\Delta y} $$
+	$$ - 2 \left( \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2 \Delta x}\right) - \frac{|\mathbf{A}_x| \Delta x}{2} \left( \frac{\mathbf{w}_{i+1}' - 2 \mathbf{w}_i' + \mathbf{w}_{i-1}'}{(\Delta x)^2} \right) \right) - \frac{2 \mathbf{A}_y}{\Delta y} + \frac{\mathbf{A}_y - |\mathbf{A}_y|}{\Delta y} $$
 	
 	The coefficients for $\mathbf{w}_{N-1}'$ are
 	
