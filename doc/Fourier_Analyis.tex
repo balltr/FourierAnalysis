@@ -637,22 +637,19 @@
 	
 	Using a small perturbation of $y_N = \bar{y}_N + \epsilon y'$ and equation (\ref{}), 
 	
-	$$ y_{\tau,N} = \epsilon y'_{\tau,N} = - \epsilon \mathbf{u}_u \frac{1}{\Delta x} \left( \frac{\partial y'}{\partial \xi} \right)_N $$
+	$$ y_{\tau,N} = \epsilon y'_{\tau,N} = - \epsilon \mathbf{u}_u \frac{1}{\Delta x} y_{\xi,N}' $$
 	
 	******* INSERT SHOCK INTERFACE MOTION WAVE EQUATION FOR REFERENCE *******
-	
-	**** INSERT DISCRETE FORMS AND DISCUSS OPTIONS -- UPWIND AND CENTRAL ****
+	See pg 11 of A novel stabilization method for high-order shock fitting with finite element methods
 	
 	Since $\mathbf{F}_{y,N}$ lies directly on a mesh node,
 	
 	$$ \mathbf{F}_{y,N} = \mathbf{F}_{y}(\mathbf{w}_N) = \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \mathbf{A}_y \mathbf{w}'_N$$
 	
-	******** THIS WAS CHANGED, CARRY IT THROUGH BELOW *********
-	
 	Now using a small perturbation of $\mathbf{w}_N = \bar{\mathbf{w}} + \epsilon \mathbf{w}'_N$,
 	
 	\begin{equation} \label{shock_term2_pt1}
-		(x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N} = \frac{\Delta x}{2} \left( \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \mathbf{A}_y \mathbf{w}'_N + \epsilon \mathbf{u}_u \frac{1}{\Delta x} \left( \frac{\partial y'}{\partial \xi} \right)_N (\bar{\mathbf{w}} + \epsilon \mathbf{w}'_N) \right)
+		(x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N} = \frac{\Delta x}{2} \left( \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \mathbf{A}_y \mathbf{w}'_N + \epsilon \mathbf{u}_u \frac{1}{\Delta x} y_{\xi,N}' (\bar{\mathbf{w}} + \epsilon \mathbf{w}'_N) \right)
 	\end{equation}
 	
 	
@@ -683,7 +680,7 @@
 	\begin{equation} \label{moving_domain_equation_term3}
 		\frac{\partial}{\partial \eta} (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})) = 
 		\epsilon \frac{\mathbf{A}_y \Delta x \mathbf{w}'_N}{2}
-		+ \epsilon \frac{\mathbf{u}_u \bar{\mathbf{w}}}{2} \left( \frac{\partial y'}{\partial \xi} \right)_N 
+		+ \epsilon \frac{\mathbf{u}_u \bar{\mathbf{w}}}{2} y_{\xi,N}' 
 		- \epsilon \frac{\mathbf{A}_y \Delta x}{2} \left( \frac{\mathbf{w}_N' + \mathbf{w}_{N-1}'}{2} \right) 
 		+ \epsilon \frac{|\mathbf{A}_y| \Delta x}{4} ( \mathbf{w}_N' - \mathbf{w}_{N-1}')
 	\end{equation}
@@ -692,7 +689,6 @@
 		
 	\begin{multline}
 		\frac{\partial \mathbf{w}'}{\partial \tau} = 
-		%\frac{2 \bar{\mathbf{w}} \mathbf{u}_u}{\Delta x \Delta y} \left( \frac{\partial y'}{\partial \xi} \right)_N 
 		- 2 \left( \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2 \Delta x}\right) - \frac{|\mathbf{A}_x| \Delta x}{2} \left( \frac{\mathbf{w}_{i+1}' - 2 \mathbf{w}_i' + \mathbf{w}_{i-1}'}{(\Delta x)^2} \right) \right)
 		\\ - \frac{4 \mathbf{F}_{x}(\bar{\mathbf{w}})}{\Delta y}    \left( \frac{y_{i+1}' - y_{i-1}'}{2 \Delta x} \right)
 		- \frac{2 \mathbf{A}_y \mathbf{w}_N'}{\Delta y}
@@ -704,7 +700,7 @@
 	
 	The coefficients for $\mathbf{w}_N'$ are
 	
-	$$ - 2 \left( \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2 \Delta x}\right) - \frac{|\mathbf{A}_x| \Delta x}{2} \left( \frac{\mathbf{w}_{i+1}' - 2 \mathbf{w}_i' + \mathbf{w}_{i-1}'}{(\Delta x)^2} \right) \right) - \frac{2 \mathbf{A}_y}{\Delta y} + \frac{\mathbf{A}_y - |\mathbf{A}_y|}{\Delta y} $$
+	$$ - 2 \left( \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2 \Delta x}\right) - \frac{|\mathbf{A}_x| \Delta x}{2} \left( \frac{\mathbf{w}_{i+1}' - 2 \mathbf{w}_i' + \mathbf{w}_{i-1}'}{(\Delta x)^2} \right) \right) -  \frac{\mathbf{A}_y + |\mathbf{A}_y|}{\Delta y} $$
 	
 	The coefficients for $\mathbf{w}_{N-1}'$ are
 	
@@ -715,6 +711,8 @@
 	$$ -\frac{4 \mathbf{F}_{x}(\bar{\mathbf{w}})}{\Delta y}    \left( \frac{y_{i+1}' - y_{i-1}'}{2 \Delta x} \right) $$
 	
 	We can now plot the eigenvalues of this equation using Fourier analysis in the x-direction. 
+	
+	**** INSERT EQUATION FOR y' ********
 	
 
 \end{document}

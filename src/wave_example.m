@@ -184,9 +184,6 @@ for k = -pi:pi/30:pi
   ddx = 1i*sin(k*dx)/dx;
   d2dx = -(2-2*cos(k*dx))/dx^2;
   
-  % du/dt = -(ax du/dx -adis*|ax|/2 d^2u/dx^2) -(ay du/dy -adis*|ay|/2 d^2u/dy^2 )
-  % (u_{j+1} - u_{j-1})/(2*dy) + adis|ay|/2 (u_{j+1}-2u_{j}+u_{j-1})/dy^2
-  
   rhsp1 = -Af/(2*dy) + (adis*absAf/2)/dy^2;
   rhs = -(Ae*ddx-adis*absAe/2*d2dx) - 2*(adis*absAf/2)/dy^2;
   rhsm1 = Af/(2*dy) + (adis*absAf/2)/dy^2;
@@ -285,57 +282,91 @@ Ny = length(y);
 adis = 1.0;
 
 % 0 for central diff or 1 for upwind
-FDswitch = 1;
+fdSwitch = 1;
+% 0 for full eig spectrum, 1 for eig pairs
+eigSwitch = 0;
+% 0 for shock off, 1 for shock on
+shockSwitch = 0;
 
-% for k = -pi/30:pi/15:pi/30
-for k = -pi:pi/20:pi
+if eigSwitch == 0
+    maxWaveNum = pi;
+    minWaveNum = -pi;
+    incWaveNum = pi/20;
+    waveNumArray = minWaveNum:incWaveNum:maxWaveNum;
+elseif eigSwitch == 1
+    eigPair = pi/10; % +\-
+    waveNumArray = [-eigPair, eigPair];
+end
+
+CM = turbo(length(waveNumArray));
+colorIdx = 0;
+
+for ii = 1:length(waveNumArray)
+    k = waveNumArray(ii);
+    colorIdx = colorIdx + 1;
     
     ddx = 1i*sin(k*dx)/dx;
     d2dx = -(2-2*cos(k*dx))/dx^2;
-
-    % du/dt = -(ax du/dx -adis*|ax|/2 d^2u/dx^2) -(ay du/dy -adis*|ay|/2 d^2u/dy^2 )
-    % (u_{j+1} - u_{j-1})/(2*dy) + adis|ay|/2 (u_{j+1}-2u_{j}+u_{j-1})/dy^2
-
-    % interior
-    rhsp1 = -Af/(2*dy) + (adis*absAf/2)/dy^2;
-    rhs = -(Ae*ddx-adis*absAe/2*d2dx) - 2*(adis*absAf/2)/dy^2;
-    rhsm1 = Af/(2*dy) + (adis*absAf/2)/dy^2;
-    Mat = full(blktridiag(rhs,rhsm1,rhsp1,Ny));
-    Mat(end-numVar+1:end,:) = 0; % zeros bottom entries for shock boundary
-
-    % Moving shock BC on top
-    wRHSM1 = 1/dy*(Af+absAf);
-    wRHS = -2*(Ae*ddx-adis*absAe*dx/2*d2dx) - 2*Af/dy + 1/dy*(Af-absAf);
-    %   rhsp1 = zeros(numVar);
-
-    Mat(end-numVar+1:end,end-numVar+1:end) = wRHS;
-    Mat(end-numVar+1:end,end-2*numVar+1:end-numVar) = wRHSM1;
-    %   Mat(end-numVar+1:end,numVar+1:2*numVar) = wRHSP1;
     
-    if FDswitch == 0
-        % central difference
-        ddx_y = 1i*sin(k*dx)/dx;
-%         d2dx = -(2-2*cos(k*dx))/dx^2;
-    elseif FDswitch == 1
-        % upwind (backward difference)
-        ddx_y = (1i*sin(k*dx) - cos(k*dx) + 1)/dx;
-%         d2dx = (1i*(2*sin(k*dx)-sin(2*k*dx)) - 2*cos(k*dx)+cos(2*k*dx) + 1)/dx^2;
+    if shockSwitch == 0
+        rhsp1 = -Af/(2*dy) + (adis*absAf/2)/dy^2;
+        rhs = -(Ae*ddx-adis*absAe/2*d2dx) - 2*(adis*absAf/2)/dy^2;
+        rhsm1 = Af/(2*dy) + (adis*absAf/2)/dy^2;
+  
+        Mat = full(blktridiag(rhs,rhsm1,rhsp1,Ny));
+  
+        % Periodic BC's
+        Mat(1:numVar,end-numVar+1:end) = rhsm1;
+        Mat(end-numVar+1:end,1:numVar) = rhsp1;
+    elseif shockSwitch == 1
+
+        % interior
+        rhsp1 = -Af/(2*dy) + (adis*absAf/2)/dy^2;
+        rhs = -(Ae*ddx-adis*absAe/2*d2dx) - 2*(adis*absAf/2)/dy^2;
+        rhsm1 = Af/(2*dy) + (adis*absAf/2)/dy^2;
+        Mat = full(blktridiag(rhs,rhsm1,rhsp1,Ny));
+        Mat(end-numVar+1:end,:) = 0; % zeros bottom entries for shock boundary
+
+        % Moving shock BC on top
+        wRHSM1 = 1/dy*(Af+absAf);
+        wRHS = -2*(Ae*ddx-adis*absAe*dx/2*d2dx) - 1/dy*(Af+absAf);
+        %   rhsp1 = zeros(numVar);
+
+        Mat(end-numVar+1:end,end-numVar+1:end) = wRHS;
+        Mat(end-numVar+1:end,end-2*numVar+1:end-numVar) = wRHSM1;
+        %   Mat(end-numVar+1:end,numVar+1:2*numVar) = wRHSP1;
+
+        if fdSwitch == 0
+            % central difference
+            ddx_y = 1i*sin(k*dx)/dx;
+%             d2dx = -(2-2*cos(k*dx))/dx^2;
+        elseif fdSwitch == 1
+            % upwind (backward difference)
+            ddx_y = (1i*sin(k*dx) - cos(k*dx) + 1)/dx;
+%             d2dx = (1i*(2*sin(k*dx)-sin(2*k*dx)) - 2*cos(k*dx)+cos(2*k*dx) + 1)/dx^2;
+        end
+
+        % for y'
+        yRHS = -4*eEval/dy*ddx;
+        Mat((Ny-1)*numVar+1:Ny*numVar, Ny*numVar+1) = yRHS;
+        % this comes from wave equation of y'
+        Mat(Ny*numVar+1,Ny*numVar+1) = -u/dx*ddx_y;
+    
     end
-    
-    % for y'
-%     yRHS = 4*(u*w/(dx*dy) - eEval/dy)*ddx_y;
-    yRHS = -4*eEval/dy*ddx_y;
-    Mat((Ny-1)*numVar+1:Ny*numVar, Ny*numVar+1) = yRHS;
-    % this comes from wave equation of y'
-    Mat(Ny*numVar+1,Ny*numVar+1) = -u/dx*ddx_y;
 
     [V,E] = eig(Mat);
 
-    plot(real(E),imag(E),'x')
+    plot(real(E),imag(E),'color',CM(colorIdx,:),'marker','x','LineStyle','none')
     hold on
 end
-title('2D Euler With Shock Eigenvalues')
+if shockSwitch == 0
+    title('2D Euler With Shock Eigenvalues')
+elseif shockSwitch == 1
+    title('2D Euler Eigenvalues')
+end
 xlabel('Re')
 ylabel('Im')
 axis equal
 grid on
+colormap('turbo')
+colorbar('Ticks',[])

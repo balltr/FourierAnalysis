@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  30 AUG 2021 10:40
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  7 SEP 2021 09:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -320,28 +320,12 @@ Package pdftex.def Info: ./images/shock_point_y.jpg  used on input line 626.
 LaTeX Warning: Reference `' on page 11 undefined on input line 638.
 
 
-Overfull \hbox (30.95529pt too wide) in paragraph at lines 642--643
+Overfull \hbox (0.95529pt too wide) in paragraph at lines 642--644
 []\OT1/cmr/m/n/10 ******* IN-SERT SHOCK IN-TER-FACE MO-TION WAVE EQUA-TION FOR 
-REF-ER-ENCE ******* 
+REF-ER-ENCE *******
  []
 
-
-Overfull \hbox (18.73192pt too wide) in paragraph at lines 644--645
-[]\OT1/cmr/m/n/10 **** IN-SERT DIS-CRETE FORMS AND DIS-CUSS OP-TIONS -- UP-WIND
- AND CEN-TRAL **** 
- []
-
-[11 <./images/shock_point_y.jpg>]
-Overfull \hbox (1.38803pt too wide) detected at line 689
-[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 x[]\OT1/cmr/m/n/10 (\OT1/cmr/bx/n/10 F[] \O
-MS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 y[]\OT1/cmr/bx/n/10 w\OT1/cmr/m/n/10 )) = \
-OML/cmm/m/it/10 ^^O[] \OT1/cmr/m/n/10 + \OML/cmm/m/it/10 ^^O[] [][] \OMS/cmsy/m
-/n/10 ^^@ \OML/cmm/m/it/10 ^^O[] [] \OT1/cmr/m/n/10 + \OML/cmm/m/it/10 ^^O[]\OT
-1/cmr/m/n/10 (\OT1/cmr/bx/n/10 w[] \OMS/cmsy/m/n/10 ^^@ \OT1/cmr/bx/n/10 w[]\OT
-1/cmr/m/n/10 )
- []
-
-[12] (./Fourier_Analyis.aux)
+[11 <./images/shock_point_y.jpg>] [12] (./Fourier_Analyis.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -370,7 +354,7 @@ ive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive
 18/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/201
 8/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/2018/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on Fourier_Analyis.pdf (12 pages, 965401 bytes).
+Output written on Fourier_Analyis.pdf (12 pages, 965234 bytes).
 PDF statistics:
  114 PDF objects out of 1000 (max. 8388607)
  76 compressed objects within 1 object stream
