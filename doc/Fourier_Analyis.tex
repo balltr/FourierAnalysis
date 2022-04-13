@@ -1,4 +1,4 @@
-\documentclass[10pt]{article} 
+\documentclass[10pt]{article}
 \usepackage{amsmath}
 \usepackage{cancel}
 \usepackage{geometry}
@@ -180,7 +180,7 @@
 		\centering
 	\end{figure}
 
-	From this figure, we can see that at high wave numbers, we will experience odd-even decoupling since the analytical solution goes back to zero as the numerical solution rises to $\pi$. This will result in the approximation blowing up since energies from adjacent spacial grid points in the discretization will not go anywhere.
+	From this figure, we can see that at high wave numbers, we will experience odd-even decoupling since the analytical solution goes back to zero as the numerical solution rises to $\pi$. This will result in a poor approximation since energies from adjacent spacial grid points in the discretization will not dissipate.
 	
 	Now we will apply an upwind scheme and compare with the central difference scheme and analytical solution.
 	
@@ -200,7 +200,8 @@
 		\centering
 	\end{figure}
 
-	From this figure, we again see odd-even decoupling in the complex plane, however the effect is damped by the real plane. In the real plane, the numerical solution decreases while the analytical solution is constant. This will dissipate the energies not passed on by adjacent steps in the spacial grid and prevent the approximation from blowing up.
+	From this figure, we again see odd-even decoupling in the complex plane, however the effect is damped by the real plane. In the real plane, the numerical solution decreases while the analytical solution is constant. This will dissipate the energies not passed on by adjacent steps in the spacial grid and produce more accurate solutions.
+	
 	
 \section{Fourier Analysis of 1D DGFEM Wave Equation}
 
@@ -332,7 +333,7 @@
 	$$
 	\frac{\partial}{\partial x} = \frac{i sin(k \Delta x)}{\Delta x}
 	, \quad
-	\frac{\partial^2}{\partial x^2} = - \frac{2-2cos(k \Delta x)}{\Delta x^2}
+	\frac{\partial^2}{\partial x^2} = - \frac{2-2cos(k \Delta x)}{(\Delta x)^2}
 	$$
 	
 	The eigenvalues of the right hand side of (\ref{1D_euler_upwind}) can be calculated for $-\pi < k < \pi$ using the Fourier operators. Plotting the eigenvalues yields three circles that represent the eigenvalues of the three uncoupled wave equations.
@@ -359,25 +360,25 @@
 	$${\mathbf{w}} = \left[
 	\begin{tabular}{c}
 		$\rho$\ \\
-		$\rho u_x$ \\
-		$\rho u_y$ \\
+		$\rho u$ \\
+		$\rho v$ \\
 		$\rho E$ 
 	\end{tabular}
 	\right], \quad
 	{\mathbf{F_x}} = \left[
 	\begin{tabular}{c}
-		$\rho u_x$ \\
-		$\rho u^2_x+P$ \\
-		$\rho u_x u_y$ \\
-		$\rho u_x (E + P/\rho)$ 
+		$\rho u$ \\
+		$\rho u^2+P$ \\
+		$\rho u v$ \\
+		$\rho u (E + P/\rho)$ 
 	\end{tabular}
 	\right] ,\quad
 	{\mathbf{F_y}} = \left[
 	\begin{tabular}{c}
-		$\rho u_y$ \\
-		$\rho u_x u_y$ \\
-		$\rho u^2_y+P$ \\
-		$\rho u_y (E + P/\rho)$ 
+		$\rho v$ \\
+		$\rho v u$ \\
+		$\rho v^2+P$ \\
+		$\rho v (E + P/\rho)$ 
 	\end{tabular}
 	\right] ,\quad
 	$$
@@ -444,6 +445,180 @@
 		\centering
 	\end{figure}
 	
+	\section{Shock Interface Motion}
+	
+	Using Rankine-Hugoniot shock jump conditions with a Riemann invariant, we can calculate the normal velocity of the moving shock interface. The normal vector points from the upstream towards the downstream flow field. 
+	
+	We will define the upstream and downstream normal velocities as
+	\begin{equation}
+		q_u = \mathbf{u}_u \cdot \mathbf{n},
+	\end{equation}
+	\begin{equation}
+		q_d = \mathbf{u}_d \cdot \mathbf{n},
+	\end{equation}
+	where $\mathbf{n}$ is the normal vector.
+	
+	The upstream mach number relative to the shock front is defined as
+	\begin{equation} \label{Mach_upstream}
+		M_u = \frac{q_u - u_s}{c_u}.
+	\end{equation}
+	
+	The Riemann invariant is defined as
+	\begin{equation} \label{RiemannInvariant}
+		R = \frac{2c_d}{\gamma - 1} - q_d.
+	\end{equation}
+
+	Both $M_u$ and $u_s$ are unknown in equation (\ref{Mach_upstream}), but we can combine the Rankine-Hugoniot shock jump conditions with equation (\ref{RiemannInvariant}) to get a form that can be solved for $M_u$ iteratively.
+	\begin{equation} \label{Mach_upstream2}
+		\frac{1}{\gamma-1} \sqrt{ \frac{(2\gamma M_u^2-(\gamma-1))((\gamma-1)M_u^2+2)}{M_u^2}}+\frac{M_u^2-1}{M_u} = \frac{\gamma+1}{2c_u}(R+q_u).
+	\end{equation}
+
+	Knowing $M_u$, we can solve for $u_s$ using equation (\ref{Mach_upstream}).
+	
+	 If we force the normal component of the mesh edges aligned with the shock interface to be equal to the shock velocity, we can write
+	 \begin{equation} \label{normalMesh}
+	 	u_s - \mathbf{x}_{\tau} \cdot \mathbf{n} = 0,
+	 \end{equation}
+ 	where $\mathbf{x}_{\tau}$ is the velocity of the mesh edge.
+ 	
+ 	Combining equation (\ref{Mach_upstream}) with (\ref{normalMesh}), we get
+ 	\begin{equation} \label{Mach_normal_upstream} 
+ 		q_u - \mathbf{x}_{\tau} \cdot \mathbf{n} = c_u M_u
+ 	\end{equation}
+	
+	Considering an oblique shock with a horizontal interface between the upstream and downstream flow, we can describe the perturbed position of the interface as
+	
+	\begin{equation}
+		\mathbf{x}_s = (x_s, \: y_s) = (\Delta x \xi, \: y + \epsilon y'(\tau,\xi)),
+	\end{equation}
+
+	where we assume there is only motion in the vertical direction.
+	
+	To leading order, the normal vector is given by
+	\begin{equation}
+		\mathbf{n} = \epsilon \left(\frac{1}{\Delta x} \frac{\partial y'}{\partial \xi} \right) \mathbf{i} - 1\mathbf{j}
+	\end{equation}
+	
+	**************** DEFINE $\mathbf{n}$ THEN EXPAND ****************
+	
+	The mesh interface motion equation can be decomposed into x and y components as follows:
+	\begin{equation}
+		\mathbf{x_{\tau}} = 0 \mathbf{i} + \epsilon \frac{\partial y'}{\partial \tau} \mathbf{j},
+	\end{equation}
+
+	The flow variables for the Euler equations are represented as
+	$${\mathbf{w}} = \left[
+	\begin{tabular}{c}
+		$\rho$\ \\
+		$\rho u$ \\
+		$\rho v$ \\
+		$\rho E$ 
+	\end{tabular}
+	\right]$$
+
+	The normal velocity upstream of the shock can be written as
+	\begin{equation} \label{qu}
+		q_u = u_u \epsilon \left(\frac{1}{\Delta x} \frac{\partial y'}{\partial \xi} \right) - v_u
+	\end{equation}
+
+	**************** u and v no longer defined *******************
+
+	The normal velocity downstream of the shock with a perturbation can be written as
+	\begin{equation}
+		\begin{aligned}
+			q_d &= \frac{\bar{w}_2 + \epsilon w'_2}{\bar{w}_1 + \epsilon w'_1} \epsilon \left(\frac{1}{\Delta x} \frac{\partial y'}{\partial \xi} \right) - \frac{\bar{w}_3 + \epsilon w'_3}{\bar{w}_1 + \epsilon w'_1} \\
+			&\approx \frac{\bar{w}_2}{\bar{w}_1} \epsilon \left(\frac{1}{\Delta x} \frac{\partial y'}{\partial \xi} \right) - \frac{\bar{w}_3}{\bar{w}_1} + \epsilon \left( \frac{\bar{w}_3 w'_1}{\bar{w}_1^2} - \frac{w'_3}{\bar{w}_1} \right)
+		\end{aligned}
+	\end{equation}
+	
+	Substituting equation (\ref{qu}) into equation (\ref{Mach_normal_upstream}) and expanding yields
+	\begin{equation} \label{Mach_normal_upstream2}
+		\epsilon \left(\frac{1}{\Delta x} \frac{\partial y'}{\partial \xi} \right) u_u - v_u + \epsilon \frac{\partial y'}{\partial \tau} = c_u \left( M_u + \frac{\partial M_u}{\partial q_u} dq_u + \frac{\partial M_u}{\partial q_d} dq_d + \frac{\partial M_u}{\partial c_d} dc_d  \right)
+	\end{equation}
+	
+	The perturbed downstream speed of sound can be expressed as
+	\begin{equation}
+		c_d = \sqrt{ \frac{\gamma (\gamma - 1)}{\bar{w}_1 + \epsilon w'_1} \left( \bar{w}_4 + \epsilon w'_4 - \frac{(\bar{w}_2 + \epsilon w'_2)^2 + (\bar{w}_3 + \epsilon w'_3)^2}{2(\bar{w}_1 + \epsilon w'_1)}\right) }.
+	\end{equation}
+	
+	After expanding and neglecting higher order terms, this can be rewritten as
+	\begin{equation}
+		c_d \approx \bar{c}_d+ \epsilon \frac{\gamma (\gamma - 1)}{2 \bar{c}_d} \left( \frac{1}{\bar{w}_1^2} \left( \frac{\bar{w}_2^2 + \bar{w}_3^2}{\bar{w}_1} - \bar{w}_4 \right) w'_1 - \frac{\bar{w}_2}{\bar{w}_1^2} w'_2 - \frac{\bar{w}_3}{\bar{w}_1^2} w'_3 + \frac{1}{\bar{w}_1} w'_4\right)
+	\end{equation}
+	where
+	\begin{equation}
+		\bar{c}_d = \sqrt{ \frac{\gamma (\gamma - 1)}{\bar{w}_1} \left( \bar{w}_4 - \frac{\bar{w}_2^2 + \bar{w}^2_3}{2 \bar{w}_1} \right) },
+	\end{equation}
+	
+	The changes in the upstream normal flow, downstream normal flow and downstream speed of sound respectively are
+	
+	\begin{equation}
+		dq_u = u_u \epsilon \left(\frac{1}{\Delta x} \frac{\partial 	y'}{\partial \xi} \right)
+	\end{equation}
+	\begin{equation}
+		dq_d = \frac{\bar{w}_2}{\bar{w}_1} \epsilon \left(\frac{1}{\Delta x} \frac{\partial y'}{\partial \xi} \right) + \epsilon \left( \frac{\bar{w}_3 w'_1}{\bar{w}_1^2} - \frac{w'_3}{\bar{w}_1} \right)
+	\end{equation}
+	\begin{equation}
+		dc_d = \epsilon \frac{\gamma (\gamma - 1)}{2 \bar{c}_d} \left( \frac{1}{\bar{w}_1^2} \left( \frac{\bar{w}_2^2 + \bar{w}_3^2}{\bar{w}_1} - \bar{w}_4 \right) w'_1 - \frac{\bar{w}_2}{\bar{w}_1^2} w'_2 - \frac{\bar{w}_3}{\bar{w}_1^2} w'_3 + \frac{1}{\bar{w}_1} w'_4\right)
+	\end{equation}
+
+	The derivatives $\frac{\partial M_u}{\partial q_u}$ and $\frac{\partial M_u}{\partial q_d}$ can be evaluated by first rewriting equation (\ref{Mach_upstream2}) as
+	\begin{equation}
+		f = \frac{1}{\gamma-1} \sqrt{ \frac{(2\gamma M_u^2-(\gamma-1))((\gamma-1)M_u^2+2)}{M_u^2}}+\frac{M_u^2-1}{M_u} - \frac{\gamma+1}{2c_u} \left( q_u - q_d + \frac{2c_d}{\gamma - 1} \right).
+	\end{equation}
+	
+	Using the chain rule, we get the following:
+	
+	\begin{equation}
+		\frac{\partial f}{\partial M_u} dM_u + \frac{\partial f}{\partial q_u} dq_u + \frac{\partial f}{\partial q_d} dq_d + \frac{\partial f}{\partial c_d} dc_d = 0
+	\end{equation}
+	
+	\begin{equation}
+		\frac{\partial M_u}{\partial q_u} = - \frac{\partial f}{\partial q_u} \left( \frac{\partial f}{\partial M_u} \right)^{-1},
+	\end{equation}
+	\begin{equation}
+		\frac{\partial M_u}{\partial q_d} = - \frac{\partial f}{\partial q_d} \left( \frac{\partial f}{\partial M_u} \right)^{-1},
+	\end{equation}
+	\begin{equation}
+		\frac{\partial M_u}{\partial c_d} = - \frac{\partial f}{\partial c_d} \left( \frac{\partial f}{\partial M_u} \right)^{-1}.
+	\end{equation}
+
+	Substituting these into equation (\ref{Mach_normal_upstream2}) yields
+	\begin{equation}
+		\epsilon \left(\frac{1}{\Delta x} \frac{\partial y'}{\partial \xi} \right) u_u - v_u + \epsilon \frac{\partial y'}{\partial \tau} = c_u \left( M_u + \left( \frac{(\gamma +1)}{2c_u} dq_u - \frac{(\gamma +1)}{2c_u} dq_d +  \frac{(\gamma +1)}{c_u(\gamma - 1)} dc_d \right) \left( \frac{\partial f}{\partial M_u} \right)^{-1}  \right)
+	\end{equation}
+	
+	Here, we can cancel out $-v_u$ with $c_uM_u$ since $M_u$ is in the frame of reference of the upstream velocity. This leaves us with 
+	\begin{equation} \label{normalMesh2}
+		\epsilon \left(\frac{1}{\Delta x} \frac{\partial y'}{\partial \xi} \right) u_u + \epsilon \frac{\partial y'}{\partial \tau} = c_u\left( \left( \frac{(\gamma +1)}{2c_u} dq_u - \frac{(\gamma +1)}{2c_u} dq_d +  \frac{(\gamma +1)}{c_u(\gamma - 1)} dc_d \right) \left( \frac{\partial f}{\partial M_u} \right)^{-1}  \right)
+	\end{equation}
+	
+	Simplifying the right hand side of equation (\ref{normalMesh2}) and solving for $\frac{\partial y'}{\partial \xi}$ yields
+	
+	\begin{equation} \label{dypdtau}
+		 \epsilon \frac{\partial y'}{\partial \tau} = \left( dq_u - dq_d +  \frac{2}{(\gamma - 1)} dc_d \right) \left( \frac{\gamma + 1}{2} \right) \left( \frac{\partial f}{\partial M_u} \right)^{-1} - \epsilon \left(\frac{1}{\Delta x} \frac{\partial y'}{\partial \xi} \right) u_u
+	\end{equation}
+	
+	We can isolate the coefficients of the perturbed variables to enter into the system of equations. The coefficients are as follows:
+	
+	$$
+		\epsilon \frac{1}{\Delta x} \frac{\partial y'}{\partial \xi} \left[ \left( \frac{\partial f}{\partial M_u} \right)^{-1} \left( \frac{\gamma + 1}{2} \right) \left( u_u - \frac{\bar{w}_2}{\bar{w}_1} \right) - u_u \right]
+	$$
+	$$
+		\epsilon w'_1 \left[ \left( \frac{\partial f}{\partial M_u} \right)^{-1} \left( \frac{\gamma + 1}{2} \right) \left( \frac{\gamma}{\bar{c}_d \bar{w}_1^2} \left( \frac{\bar{w}_2^2 + \bar{w}_3^2}{\bar{w}_1} - \bar{w}_4 \right) - \frac{\bar{w}_3}{\bar{w}_1^2} \right) \right]
+	$$
+	$$
+		\epsilon w'_2 \left[ \left( \frac{\partial f}{\partial M_u} \right)^{-1} \left( \frac{\gamma + 1}{2} \right) \left( -\frac{\gamma \bar{w}_2}{\bar{c}_d \bar{w}_1^2}  \right) \right]
+	$$
+	$$
+		\epsilon w'_3 \left[ \left( \frac{\partial f}{\partial M_u} \right)^{-1} \left( \frac{\gamma + 1}{2} \right) \left(\frac{1}{\bar{w}_1} -  \frac{\gamma \bar{w}_3}{\bar{c}_d \bar{w}_1^2} \right) \right]
+	$$
+	$$
+		\epsilon w'_4 \left[ \left( \frac{\partial f}{\partial M_u} \right)^{-1} \left( \frac{\gamma + 1}{2} \right) \left( \frac{\gamma}{\bar{c}_d \bar{w}_1}  \right) \right]
+	$$
+	
+	
+	 
 	
 	\section{2D Euler Equations with Shock}
 	
@@ -456,10 +631,10 @@
 	Since the governing equations (\ref{2D_euler}) will be solved on a moving domain, it is convenient to write them in unsteady curvilinear coordinates as follows:
 	
 	$$ x = f(\xi) $$
-	$$ y = g(\eta,\tau) $$
+	$$ y = g(\xi,\eta,\tau) $$
 	$$ t = \tau $$
 	
-	Introducing the Jacobian matrix of the coordinate transformation, $J_{ij} = \frac{\partial x_i}{\partial \xi_j}$ , the Jacobian determinant, $|J|$, and the domain velocity, $x_{i,\tau} = \frac{\partial x_i}{\partial \tau}$ , the governing equations can be written in curvilinear coordinates as
+	Introducing the Jacobian matrix of the coordinate transformation, $J_{ji} = \frac{\partial x_j}{\partial \xi_i}$ , the Jacobian determinant, $|J|$, and the domain velocity, $x_{i,\tau} = \frac{\partial x_i}{\partial \tau}$ , the governing equations can be written in curvilinear coordinates as
 	
 	\begin{equation} \label{curvilinear}
 		\frac{\partial (|\mathbf{J}| \mathbf{w})}{\partial \tau} + \frac{\partial \tilde{\mathbf{F}}_j}{\partial \xi_j} = 0,
@@ -468,7 +643,7 @@
 	where the effective flux $\tilde{\mathbf{F}}$ is defined as
 	
 	\begin{equation} \label{effective_flux}
-		\tilde{\mathbf{F}}_i = |\mathbf{J}| \mathbf{J}_{ij}^{-1}(\mathbf{F}_j - \mathbf{w}x_{j,\tau}).
+		\tilde{\mathbf{F}}_i = |\mathbf{J}| \mathbf{J}_{ij}^{-1} (\mathbf{F}_j - x_{j,\tau} \mathbf{w}).
 	\end{equation}
 		
 	 Equations (\ref{curvilinear}) and (\ref{effective_flux}) account for domain motion in both the $x$ and $y$ directions, however these can be simplified for the case where there is only motion in the $y$ direction.
@@ -476,9 +651,9 @@
 	 The Jacobian can be simplified to
 	 
 	 $$
-	 \mathbf{\mathbf{J}}_{ij} = \frac{\partial x_i}{\partial \xi_j} = 
+	 \mathbf{\mathbf{J}}_{ij} = \frac{\partial x_j}{\partial \xi_i} = 
 	 \begin{bmatrix}
-	 	x_\xi & 0 \\
+	 	x_\xi & y_\xi \\
 	 	0 & y_\eta
 	 \end{bmatrix}
 	$$
@@ -498,36 +673,39 @@
 	 The determinant of the Jacobian multiplied by the inverse of the Jacobian becomes
 	 
 	 $$
-	 |\mathbf{J}| \mathbf{J}_{ij}^{-1} = 
+	 |\mathbf{J}| \mathbf{J}_{ji}^{-1} = 
 	 \begin{bmatrix}
-	 	y_\eta & 0 \\
+	 	y_\eta & -y_\xi \\
 	 	0 & x_\xi
 	 \end{bmatrix}
 	 $$
 	 
 	 The simplified effective fluxes become
 	 
-	 $$ \tilde{\mathbf{F}}_x = y_\eta \mathbf{F}_x $$
+	 $$ \tilde{\mathbf{F}}_\xi = y_\eta \mathbf{F}_x$$
 	 
-	 $$ \tilde{\mathbf{F}}_y= x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}) $$
+	 $$ \tilde{\mathbf{F}}_\eta = -y_\xi \mathbf{F}_x + x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})$$
 	 
 	 Substituting these simplifications and effective fluxes into equation (\ref{curvilinear}) yields
 	 
 	 \begin{equation} \label{moving_domain_equation}
-	 	\frac{\partial (|\mathbf{J}| \mathbf{w})}{\partial \tau} + \frac{\partial}{\partial \xi} (y_\eta \mathbf{F}_x) + \frac{\partial}{\partial \eta} (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})) = 0
+	 	\frac{\partial (|\mathbf{J}| \mathbf{w})}{\partial \tau} 
+	 	+ \frac{\partial}{\partial \xi} (y_\eta \mathbf{F}_x) 
+	 	+ \frac{\partial}{\partial \eta} (-y_\xi \mathbf{F}_x + x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})) 
+	 	= 0
 	 \end{equation} 
 	 
 	 \subsection{Non-Shock Layer Nodes}
 	 
-	 Equation (\ref{moving_domain_equation}) can be further simplified to
+	 Equation (\ref{moving_domain_equation}) can be further simplified as follows
 	 
-	 $$ x_\xi \frac{\partial}{\partial \tau} \left( y_\eta \mathbf{w} \right) + \frac{\partial}{\partial \xi} \tilde{\mathbf{F}}_x + \frac{\partial}{\partial \eta} \tilde{\mathbf{F}}_y = 0 $$
+	 $$ x_\xi \frac{\partial}{\partial \tau} \left( y_\eta \mathbf{w} \right) + \frac{\partial}{\partial \xi} \tilde{\mathbf{F}}_\xi + \frac{\partial}{\partial \eta} \tilde{\mathbf{F}}_\eta = 0 $$
 	 
-	 $$ x_\xi \frac{\partial}{\partial \tau} \left( y_\eta \mathbf{w} \right) + \frac{\partial}{\partial \xi} (y_\eta \mathbf{F}_x) + \frac{\partial}{\partial \eta} (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})) = 0$$
+	 $$ x_\xi \frac{\partial}{\partial \tau} \left( y_\eta \mathbf{w} \right) + \frac{\partial}{\partial \xi} (y_\eta \mathbf{F}_x) + \frac{\partial}{\partial \eta} (-y_\xi \mathbf{F}_x + x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})) = 0$$
 	 
-	 $$ x_\xi (y_{\eta \tau} \mathbf{w} + y_\eta \mathbf{w}_\tau) + y_\eta \frac{\partial}{\partial \xi} \mathbf{F}_x + x_\xi \left(\frac{\partial}{\partial \eta} \mathbf{F}_y - y_{\eta \tau} \mathbf{w} - y_\tau \mathbf{w}_\eta \right) = 0$$
+	 $$ x_\xi (y_{\eta \tau} \mathbf{w} + y_\eta \mathbf{w}_\tau) + y_\eta \frac{\partial \mathbf{F}_x}{\partial \xi} - y_\xi \frac{\partial \mathbf{F}_x}{\partial \eta} + x_\xi \left(\frac{\partial \mathbf{F}_y}{\partial \eta} - y_{\eta \tau} \mathbf{w} - y_\tau \mathbf{w}_\eta \right) = 0$$
 	 
-	 For all of the nodes below the shock layer, $y_{\tau} = 0$
+	 For all of the nodes below the shock layer, $y_{\tau} = 0$ and $y_{\xi} = 0$
 	 
 	 $$ x_\xi y_\eta \mathbf{w}_\tau + y_\eta \frac{\partial \mathbf{F}_x}{\partial \xi} + x_\xi \frac{\partial \mathbf{F}_y}{\partial \eta} = 0 $$
 	 
@@ -547,30 +725,33 @@
 
 	Using a small perturbation of $\mathbf{w} = \bar{\mathbf{w}} + \epsilon \mathbf{w}'$, equation (\ref{curvilinear_interior_linearized}) can be Taylor expanded. Considering only the first order terms of the perturbation yields
 	
-	$$ \mathbf{w}'_\tau  + \left. \frac{\partial \mathbf{F}_x}{\partial \mathbf{w}} \right|_{\bar{\mathbf{w}}} \frac{\partial \mathbf{w}'}{\partial x} + \left. \frac{\partial \mathbf{F}_y}{\partial \mathbf{w}} \right|_{\bar{\mathbf{w}}} \frac{\partial \mathbf{w}'}{\partial y} = 0 $$
+	$$ \epsilon \mathbf{w}'_\tau  + \epsilon \left. \frac{\partial \mathbf{F}_x}{\partial \mathbf{w}} \right|_{\bar{\mathbf{w}}} \frac{\partial \mathbf{w}'}{\partial x} + \epsilon \left. \frac{\partial \mathbf{F}_y}{\partial \mathbf{w}} \right|_{\bar{\mathbf{w}}} \frac{\partial \mathbf{w}'}{\partial y} = 0 $$
 	
 	or
 	
 	\begin{equation} \label{curvilinear_interior_expanded}
-		\mathbf{w}'_\tau  + \mathbf{A}_x \frac{\partial \mathbf{w}'}{\partial x} + \mathbf{A}_y \frac{\partial \mathbf{w}'}{\partial y} = 0
+		\epsilon \mathbf{w}'_\tau  + \epsilon \mathbf{A}_x \frac{\partial \mathbf{w}'}{\partial x} + \epsilon \mathbf{A}_y \frac{\partial \mathbf{w}'}{\partial y} = 0
 	\end{equation}
 	
 	***** INSERT DISCRETE FORMULATIONS OF EQUATION (\ref{curvilinear_interior_expanded}) *****
 	
 	\subsection{Evolution Equation for Shock Point}
 	
-	************* INSERT DIAGRAM OF NODE LOCATIONS WITH N, N-1/2 AND N-1. LABEL UPSTREAM, DOWNSTREAM, AND SHOCK LOCATION  *************
+	\begin{figure}[h]
+		\includegraphics[width=6cm]{shock_point_y}
+		\centering
+	\end{figure}
 	
-	Using a small perturbation of $y_N = \bar{y}_N + \epsilon y'$, the Jacobian determinant reduces to
+	Using a small perturbation of $y_N = \bar{y}_N + \epsilon y'_N$, the Jacobian determinant reduces to
 	
-	$$ |\mathbf{J}| = x_\xi y_\eta = x_\xi (y_N - y_{N-\frac{1}{2}}) = x_\xi (\bar{y}_N + \epsilon y' - y_{N-\frac{1}{2}}) $$
+	$$ |\mathbf{J}| = x_\xi y_\eta = x_\xi (y_N - y_{N-\frac{1}{2}}) = x_\xi (\bar{y}_N + \epsilon y'_N - y_{N-\frac{1}{2}}) $$
 	
-	When $y_\eta = y_N - y_{N-\frac{1}{2}}$.
+	where $y_\eta = y_N - y_{N-\frac{1}{2}}$.
 	
 	After considering only the first order terms of the perturbation, the first term of equation (\ref{moving_domain_equation}) becomes
 	
 	\begin{equation} \label{moving_domain_equation_term1}
-		\frac{\partial (|\mathbf{J}| \mathbf{w})}{\partial \tau} = \frac{\partial}{\partial \tau} (x_\xi (\bar{y}_N + \epsilon y' - y_{N-\frac{1}{2}}) (\bar{\mathbf{w}} + \epsilon \mathbf{w}')) = \bar{\mathbf{w}} x_\xi \frac{\partial}{\partial \tau}(y') + x_\xi y_\eta \frac{\partial}{\partial \tau} (\mathbf{w}') + O(\epsilon^2)
+		\frac{\partial (|\mathbf{J}| \mathbf{w})}{\partial \tau} = \frac{\partial}{\partial \tau} (x_\xi (\bar{y}_N + \epsilon y'_N - y_{N-\frac{1}{2}}) (\bar{\mathbf{w}} + \epsilon \mathbf{w}')) = \epsilon \left( \bar{\mathbf{w}} x_\xi y'_{\tau,N} + x_\xi y_\eta  \mathbf{w}'_{\tau} \right) + O(\epsilon^2)
 	\end{equation}
 	
 	\begin{figure}[h]
@@ -600,7 +781,7 @@
 	
 	$$ \mathbf{F}_{x,i+\frac{1}{2}} = \mathbf{F}_{x}(\bar{\mathbf{w}}) + \epsilon \mathbf{A}_x \left( \frac{\mathbf{w}_i' + \mathbf{w}_{i+1}'}{2}\right) - \epsilon \frac{|\mathbf{A}_x|}{2} ( \mathbf{w}_{i+1}' - \mathbf{w}_i') $$
 	
-	$y_{\eta,i+\frac{1}{2}}$ can be approximated as the average of $y_{\eta, i}$ and $y_{\eta, i+1}$. Combining this will a small perturbation of $y_N = \bar{y}_N + \epsilon y'$,
+	$y_{\eta,i+\frac{1}{2}}$ can be approximated as the average of $y_{\eta, i}$ and $y_{\eta, i+1}$. Combining this will a small perturbation of $y_N = \bar{y}_N + \epsilon y'_N$,
 	
 	$$ y_{\eta,i+\frac{1}{2}} = \bar{y}_N + \epsilon \frac{y_i' + y_{i+1}'}{2} - y_{N-\frac{1}{2}}$$
 	
@@ -622,85 +803,100 @@
 	    + \epsilon \mathbf{F}_{x}(\bar{\mathbf{w}}) \left( \frac{y_{i+1}' - y_{i-1}'}{2} \right)
 	\end{equation}
 	
-	\begin{figure}[h]
-		\includegraphics[width=6cm]{shock_point_y}
-		\centering
-	\end{figure}
-	
 	The third term of equation (\ref{moving_domain_equation}) can be approximated by taking the difference between the top and bottom face of the half cell at the top of the domain.
 	
-	$$ \frac{\partial}{\partial \eta} (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})) =  (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N} - (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N-\frac{1}{2}} $$
+	$$ \frac{\partial}{\partial \eta} (-y_\xi \mathbf{F}_x + x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})) =  (-y_\xi \mathbf{F}_x + x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N} - (-y_\xi \mathbf{F}_x + x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N-\frac{1}{2}} $$
 	
-	Since $\xi$ goes from -1 to 1 in a cell,
+	Using an upwind flux, all components at face $N$ are evaluated using upstream values.
+	$$ (-y_\xi \mathbf{F}_x + x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N} = -y_\xi \mathbf{F}_{x,u} + x_\xi (\mathbf{F}_{y,u} - y_\tau \mathbf{w}_u)$$
 	
-	$$ x_{\xi}= \frac{\Delta x}{2} $$
+	Since $\xi$ varies from $-1/2$ to $1/2$ in a cell,
 	
-	Using a small perturbation of $y_N = \bar{y}_N + \epsilon y'$ and equation (\ref{}), 
+	$$ x_{\xi}= \Delta x$$
 	
-	$$ y_{\tau,N} = \epsilon y'_{\tau,N} = - \epsilon \mathbf{u}_u \frac{1}{\Delta x} y_{\xi,N}' $$
+	Using a small perturbation of $y_N = \bar{y}_N + \epsilon y'_N$ %and equation (\ref{dypdtau}), 
 	
-	******* INSERT SHOCK INTERFACE MOTION WAVE EQUATION FOR REFERENCE *******
-	See pg 11 of A novel stabilization method for high-order shock fitting with finite element methods
+	$$ y_{\tau,N} = \epsilon y'_{\tau,N}, $$ % = \left( dq_u - dq_d +  \frac{2}{(\gamma - 1)} dc_d \right) \left( \frac{\gamma + 1}{2} \right) \left( \frac{\partial f}{\partial M_u} \right)^{-1} - \epsilon \left(\frac{1}{\Delta x} y_{\xi,N}' \right) u_u $$
+	$$ y_{\xi,N} = \epsilon y'_{\xi,N}. $$
 	
-	Since $\mathbf{F}_{y,N}$ lies directly on a mesh node,
+	Since $\mathbf{F}_{x,u}$ and $\mathbf{F}_{y,u}$ are evaluated using upstream values, 
+	$$ \mathbf{F}_{x,u} = \mathbf{F}_{x}(\mathbf{w}_u), $$
+	$$ \mathbf{F}_{y,u} = \mathbf{F}_{y}(\mathbf{w}_u). $$
 	
-	$$ \mathbf{F}_{y,N} = \mathbf{F}_{y}(\mathbf{w}_N) = \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \mathbf{A}_y \mathbf{w}'_N$$
+	In order to preserve the conservation of mass for the unperturbed problem,
+	$$ \mathbf{F}_{y}(\mathbf{w}_u) = \mathbf{F}_{y}(\bar{\mathbf{w}}_d). $$
 	
-	Now using a small perturbation of $\mathbf{w}_N = \bar{\mathbf{w}} + \epsilon \mathbf{w}'_N$,
+	Substituting these yields
 	
 	\begin{equation} \label{shock_term2_pt1}
-		(x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N} = \frac{\Delta x}{2} \left( \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \mathbf{A}_y \mathbf{w}'_N + \epsilon \mathbf{u}_u \frac{1}{\Delta x} y_{\xi,N}' (\bar{\mathbf{w}} + \epsilon \mathbf{w}'_N) \right)
+		-y_\xi \mathbf{F}_{x,u} + x_\xi (\mathbf{F}_{y,u} - y_\tau \mathbf{w}_u) 
+		= -\epsilon y'_{\xi,N} \mathbf{F}_{x}(\mathbf{w}_u) + \Delta x \left( \mathbf{F}_{y}(\bar{\mathbf{w}}_d) - \epsilon y_{\tau,N}' \mathbf{w}_u \right)
 	\end{equation}
 	
 	
 	Using an upwind flux, $\mathbf{F}_{y,N-\frac{1}{2}}$ can be written as
 	
-	$$ \mathbf{F}_{y,N-\frac{1}{2}} = \frac{\mathbf{F}_{y,N} + \mathbf{F}_{y,N-1}}{2} - \frac{|\mathbf{A}_y|}{2}(\mathbf{w}_{N} - \mathbf{w}_{N-1})$$
+	$$ \mathbf{F}_{y,N-\frac{1}{2}} = \frac{\mathbf{F}_{y,N} + \mathbf{F}_{y,N-1}}{2} - \frac{|\mathbf{A}_y|}{2}(\mathbf{w}_{N} - \mathbf{w}_{N-1}) $$
 	
 	Now using a small perturbation of $\mathbf{w} = \bar{\mathbf{w}} + \epsilon \mathbf{w}'$, 
 	
 	$$ \mathbf{F}_{y,N-\frac{1}{2}} = \frac{\mathbf{F}_{y,N} + \mathbf{F}_{y,N-1}}{2} - \frac{|\mathbf{A}_y|}{2} (\epsilon \mathbf{w}_{N}' - \epsilon \mathbf{w}_{N-1}')$$
 	
-	We can now Taylor expand $\mathbf{F}_{y,N}(\mathbf{w})$ and $\mathbf{F}_{y,N-1}(\mathbf{w})$. Taking the first order terms of $\epsilon$,
+	We can now Taylor expand $\mathbf{F}_{y,N}(\bar{\mathbf{w}} + \epsilon \mathbf{w}')$ and $\mathbf{F}_{y,N-1}(\bar{\mathbf{w}} + \epsilon \mathbf{w}')$. Considering only the first order terms of $\epsilon$,
+	$$ \mathbf{F}_{y,N}(\bar{\mathbf{w}} + \epsilon \mathbf{w}'_{N}) = \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \mathbf{A_y} \mathbf{w}_{N}', $$
+	$$ \mathbf{F}_{y,N-1}(\bar{\mathbf{w}} + \epsilon \mathbf{w}'_{N-1}) = \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \mathbf{A_y} \mathbf{w}_{N-1}'. $$
 	
-	$$ \mathbf{F}_{y,N}(\bar{\mathbf{w}} + \epsilon \mathbf{w}_N') = \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \mathbf{A_y} \mathbf{w}_N' $$
-	
-	$$ \mathbf{F}_{y,N-1}(\bar{\mathbf{w}} + \epsilon \mathbf{w}'_{N-1}) = \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \mathbf{A_y} \epsilon \mathbf{w}_{N-1}' $$
-	
-	Since only the top layer of the mesh is free to move, $y_{\tau,N-\frac{1}{2}}=0$
+	Since only the top layer of the mesh is free to move, $y_{\tau,N-\frac{1}{2}}=0$ and $y_{\xi,N-\frac{1}{2}}=0$.
 	
 	Now,
 	
 	\begin{equation} \label{shock_term2_pt2}
-		(x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N-\frac{1}{2}} = \frac{\Delta x}{2} \left( \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \mathbf{A}_y \left( \frac{\mathbf{w}_N' + \mathbf{w}_{N-1}'}{2}\right) - \epsilon \frac{|\mathbf{A}_y|}{2} ( \mathbf{w}_N' - \mathbf{w}_{N-1}') \right)
+		(-y_\xi \mathbf{F}_x + x_\xi (\mathbf{F}_y - y_\tau \mathbf{w}))_{N-\frac{1}{2}} 
+		= \Delta x \left( \mathbf{F}_{y}(\bar{\mathbf{w}}) + \epsilon \frac{\mathbf{A}_y}{2} \left( \mathbf{w}_{N}' + \mathbf{w}_{N-1}' \right) - \epsilon \frac{|\mathbf{A}_y|}{2} \left( \mathbf{w}_N' - \mathbf{w}_{N-1}' \right) \right)
 	\end{equation}
 	
 	Now subtracting  equations (\ref{shock_term2_pt1}) and (\ref{shock_term2_pt2}) and taking only the first order terms of $\epsilon$ yields
 	
-	\begin{equation} \label{moving_domain_equation_term3}
-		\frac{\partial}{\partial \eta} (x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})) = 
-		\epsilon \frac{\mathbf{A}_y \Delta x \mathbf{w}'_N}{2}
-		+ \epsilon \frac{\mathbf{u}_u \bar{\mathbf{w}}}{2} y_{\xi,N}' 
-		- \epsilon \frac{\mathbf{A}_y \Delta x}{2} \left( \frac{\mathbf{w}_N' + \mathbf{w}_{N-1}'}{2} \right) 
-		+ \epsilon \frac{|\mathbf{A}_y| \Delta x}{4} ( \mathbf{w}_N' - \mathbf{w}_{N-1}')
-	\end{equation}
-	
-	We can now put equations (\ref{moving_domain_equation_term1}), (\ref{moving_domain_equation_term2}) and (\ref{moving_domain_equation_term3}) into (\ref{moving_domain_equation}) and solve for $\frac{\partial \mathbf{w}'}{\partial \tau}$. Using a central difference for $\left( \frac{\partial y'}{\partial \xi} \right)_N $, we get
-		
-	\begin{multline}
-		\frac{\partial \mathbf{w}'}{\partial \tau} = 
-		- 2 \left( \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2 \Delta x}\right) - \frac{|\mathbf{A}_x| \Delta x}{2} \left( \frac{\mathbf{w}_{i+1}' - 2 \mathbf{w}_i' + \mathbf{w}_{i-1}'}{(\Delta x)^2} \right) \right)
-		\\ - \frac{4 \mathbf{F}_{x}(\bar{\mathbf{w}})}{\Delta y}    \left( \frac{y_{i+1}' - y_{i-1}'}{2 \Delta x} \right)
-		- \frac{2 \mathbf{A}_y \mathbf{w}_N'}{\Delta y}
-		+ \frac{\mathbf{A}_y}{\Delta y} (\mathbf{w}_N' + \mathbf{w}_{N-1}')
-		- \frac{|\mathbf{A}|_y}{\Delta y} (\mathbf{w}_N' - \mathbf{w}_{N-1}')
+	\begin{multline} \label{moving_domain_equation_term3}
+		\frac{\partial}{\partial \eta} (-y_\xi \mathbf{F}_x + x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})) = 
+		\\- \epsilon y'_{\xi,N} \mathbf{F}_{x}(\mathbf{w}_u)
+		- \epsilon \Delta x y_{\tau,N}' \mathbf{w}_u
+		- \epsilon \frac{\mathbf{A}_y \Delta x}{2} \left( \mathbf{w}_{N}' + \mathbf{w}_{N-1}' \right) 
+		+ \epsilon \frac{|\mathbf{A}_y| \Delta x}{2} ( \mathbf{w}_N' - \mathbf{w}_{N-1}')
 	\end{multline}
 	
-	 It is convenient to isolate the coefficients belonging to neighboring coefficients in the y-direction. They are described as follows:
+	We can now put equations (\ref{moving_domain_equation_term1}), (\ref{moving_domain_equation_term2}) and (\ref{moving_domain_equation_term3}) into (\ref{moving_domain_equation}) and solve for $\frac{\partial \mathbf{w}'}{\partial \tau}$. Using central differencing for $y'_{\xi,N}$ we get
+		
+	\begin{multline}\label{dwydt}
+		\frac{\partial \mathbf{w}'}{\partial \tau} = 
+		\frac{2}{\Delta y} (\mathbf{w}_u - \bar{\mathbf{w}}_d) y'_{\tau,N}
+		+ \frac{2}{\Delta x \Delta y} y'_{\xi,N} \mathbf{F}_{x}(\mathbf{w}_u)
+		\\- \left( \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2 \Delta x}\right) - \frac{|\mathbf{A}_x| \Delta x}{2} \left( \frac{\mathbf{w}_{i+1}' - 2 \mathbf{w}_i' + \mathbf{w}_{i-1}'}{(\Delta x)^2} \right) \right)
+		\\ - \frac{2 \mathbf{F}_{x}(\bar{\mathbf{w}})}{\Delta y}    \left( \frac{y_{i+1}' - y_{i-1}'}{2 \Delta x} \right)
+		+ \frac{\mathbf{A}_y}{\Delta y} (\mathbf{w}_N' + \mathbf{w}_{N-1}')
+		- \frac{|\mathbf{A}_y|}{\Delta y} (\mathbf{w}_N' - \mathbf{w}_{N-1}')
+	\end{multline}
+
+	We can approximate $y'_{\xi,N}$ using a central difference as
+	\begin{equation}
+		y'_{\xi,N} = \left( \frac{y_{i+1}' - y_{i-1}'}{2 \Delta x} \right)
+	\end{equation}
+
+	Equation (\ref{dwydt}) now becomes
+	\begin{multline}
+		\frac{\partial \mathbf{w}'}{\partial \tau} = 
+		\frac{2}{\Delta y} (\mathbf{w}_u - \bar{\mathbf{w}}_d) y'_{\tau,N}
+		- \frac{2}{\Delta y}(\mathbf{F}_{x}(\mathbf{w}_u) - \mathbf{F}_{x}(\bar{\mathbf{w}})) \left( \frac{y_{i+1}' - y_{i-1}'}{2 \Delta x} \right)
+		\\- \left( \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2 \Delta x}\right) - \frac{|\mathbf{A}_x| \Delta x}{2} \left( \frac{\mathbf{w}_{i+1}' - 2 \mathbf{w}_i' + \mathbf{w}_{i-1}'}{(\Delta x)^2} \right) \right)
+		\\ + \frac{\mathbf{A}_y}{\Delta y} (\mathbf{w}_N' + \mathbf{w}_{N-1}')
+		- \frac{|\mathbf{A}_y|}{\Delta y} (\mathbf{w}_N' - \mathbf{w}_{N-1}')
+	\end{multline}
+	
+	 It is convenient to isolate the coefficients belonging to neighboring nodes in the y-direction. They are described as follows:
 	
 	The coefficients for $\mathbf{w}_N'$ are
 	
-	$$ - 2 \left( \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2 \Delta x}\right) - \frac{|\mathbf{A}_x| \Delta x}{2} \left( \frac{\mathbf{w}_{i+1}' - 2 \mathbf{w}_i' + \mathbf{w}_{i-1}'}{(\Delta x)^2} \right) \right) -  \frac{\mathbf{A}_y + |\mathbf{A}_y|}{\Delta y} $$
+	$$ - \left( \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2 \Delta x}\right) - \frac{|\mathbf{A}_x| \Delta x}{2} \left( \frac{\mathbf{w}_{i+1}' - 2 \mathbf{w}_i' + \mathbf{w}_{i-1}'}{(\Delta x)^2} \right) \right) -  \frac{\mathbf{A}_y + |\mathbf{A}_y|}{\Delta y} $$
 	
 	The coefficients for $\mathbf{w}_{N-1}'$ are
 	
@@ -708,7 +904,7 @@
 	
 	The coefficients for $y_N'$ are
 	
-	$$ -\frac{4 \mathbf{F}_{x}(\bar{\mathbf{w}})}{\Delta y}    \left( \frac{y_{i+1}' - y_{i-1}'}{2 \Delta x} \right) $$
+	$$ - \frac{2}{\Delta y}(\mathbf{F}_{x}(\mathbf{w}_u) - \mathbf{F}_{x}(\bar{\mathbf{w}})) \left( \frac{y_{i+1}' - y_{i-1}'}{2 \Delta x} \right) $$
 	
 	We can now plot the eigenvalues of this equation using Fourier analysis in the x-direction. 
 	

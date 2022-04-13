@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  7 SEP 2021 09:52
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  28 MAR 2022 15:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -285,79 +285,68 @@ Overfull \hbox (21.62407pt too wide) in paragraph at lines 199--201
 <./images/1D_euler_eig.jpg, id=32, 1124.2pt x 843.15pt>
 File: ./images/1D_euler_eig.jpg Graphic file (type jpg)
 <use ./images/1D_euler_eig.jpg>
-Package pdftex.def Info: ./images/1D_euler_eig.jpg  used on input line 343.
+Package pdftex.def Info: ./images/1D_euler_eig.jpg  used on input line 344.
 (pdftex.def)             Requested size: 341.43306pt x 256.07324pt.
  [6] [7 <./images/1D_euler_eig.jpg>]
 <./images/2D_euler_eig.jpg, id=43, 3372.6pt x 1915.155pt>
 File: ./images/2D_euler_eig.jpg Graphic file (type jpg)
 <use ./images/2D_euler_eig.jpg>
-Package pdftex.def Info: ./images/2D_euler_eig.jpg  used on input line 443.
+Package pdftex.def Info: ./images/2D_euler_eig.jpg  used on input line 444.
 (pdftex.def)             Requested size: 455.24408pt x 258.50554pt.
 
-Overfull \hbox (21.62407pt too wide) in paragraph at lines 443--445
+Overfull \hbox (21.62407pt too wide) in paragraph at lines 444--446
  [][] 
  []
 
-[8 <./images/2D_euler_eig.jpg>] [9]
-<./images/shock_point_x.jpg, id=51, 374.39874pt x 201.75375pt>
+[8 <./images/2D_euler_eig.jpg>] [9] [10] [11]
+<./images/shock_point_y.png, id=58, 564.1075pt x 444.66125pt>
+File: ./images/shock_point_y.png Graphic file (type png)
+<use ./images/shock_point_y.png>
+Package pdftex.def Info: ./images/shock_point_y.png  used on input line 741.
+(pdftex.def)             Requested size: 170.71652pt x 134.5664pt.
+ [12 <./images/shock_point_y.png>]
+<./images/shock_point_x.jpg, id=64, 374.39874pt x 201.75375pt>
 File: ./images/shock_point_x.jpg Graphic file (type jpg)
 <use ./images/shock_point_x.jpg>
-Package pdftex.def Info: ./images/shock_point_x.jpg  used on input line 577.
+Package pdftex.def Info: ./images/shock_point_x.jpg  used on input line 758.
 (pdftex.def)             Requested size: 170.71652pt x 91.99512pt.
- [10 <./images/shock_point_x.jpg>]
-Overfull \hbox (22.67873pt too wide) detected at line 623
+
+Overfull \hbox (22.67873pt too wide) detected at line 804
 []\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 y[]\OT1/cmr/bx/n/10 F[]\OT1/cmr/m/n/10 ) = 
 ([] \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 y[]\OT1/cmr/m/n/10 ) [] + \OML/cmm/m/
 it/10 ^^O\OT1/cmr/bx/n/10 F[]\OT1/cmr/m/n/10 ([]) []
  []
 
-<./images/shock_point_y.jpg, id=55, 261.97874pt x 202.7575pt>
-File: ./images/shock_point_y.jpg Graphic file (type jpg)
-<use ./images/shock_point_y.jpg>
-Package pdftex.def Info: ./images/shock_point_y.jpg  used on input line 626.
-(pdftex.def)             Requested size: 170.71652pt x 132.12804pt.
-
-LaTeX Warning: Reference `' on page 11 undefined on input line 638.
-
-
-Overfull \hbox (0.95529pt too wide) in paragraph at lines 642--644
-[]\OT1/cmr/m/n/10 ******* IN-SERT SHOCK IN-TER-FACE MO-TION WAVE EQUA-TION FOR 
-REF-ER-ENCE *******
- []
-
-[11 <./images/shock_point_y.jpg>] [12] (./Fourier_Analyis.aux)
-
-LaTeX Warning: There were undefined references.
-
- ) 
+[13 <./images/shock_point_x.jpg>] [14] [15] (./Fourier_Analyis.aux) ) 
 Here is how much of TeX's memory you used:
- 2650 strings out of 492649
- 37295 string characters out of 6129622
- 117061 words of memory out of 5000000
- 6492 multiletter control sequences out of 15000+600000
+ 2659 strings out of 492649
+ 37432 string characters out of 6129622
+ 121157 words of memory out of 5000000
+ 6501 multiletter control sequences out of 15000+600000
  9642 words of font info for 35 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 41i,10n,29p,563b,219s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
-></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
-</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx5.pfb></
-usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></us
-r/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr
-/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/
-local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/lo
-cal/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/loca
-l/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/
-texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/te
-xlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texl
-ive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive
-/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/20
-18/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/201
-8/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/2018/
-texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on Fourier_Analyis.pdf (12 pages, 965234 bytes).
+ 41i,10n,29p,563b,221s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/loca
+l/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local
+/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/
+texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx5.pfb></usr/local/te
+xlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/local/texl
+ive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texli
+ve/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texliv
+e/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/
+2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/20
+18/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2018
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2018/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2018/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2018/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2018/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2018/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/2018/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmsy7.pfb>
+Output written on Fourier_Analyis.pdf (15 pages, 975094 bytes).
 PDF statistics:
- 114 PDF objects out of 1000 (max. 8388607)
- 76 compressed objects within 1 object stream
+ 126 PDF objects out of 1000 (max. 8388607)
+ 84 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  36 words of extra memory for PDF output out of 10000 (max. 10000000)
 

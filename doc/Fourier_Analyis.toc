@@ -4,6 +4,7 @@
 \contentsline {section}{\numberline {4}Fourier Analysis of 1D DGFEM Wave Equation}{5}
 \contentsline {section}{\numberline {5}1D Euler Equations}{6}
 \contentsline {section}{\numberline {6}2D Euler Equations}{7}
-\contentsline {section}{\numberline {7}2D Euler Equations with Shock}{8}
-\contentsline {subsection}{\numberline {7.1}Non-Shock Layer Nodes}{9}
-\contentsline {subsection}{\numberline {7.2}Evolution Equation for Shock Point}{10}
+\contentsline {section}{\numberline {7}Shock Interface Motion}{8}
+\contentsline {section}{\numberline {8}2D Euler Equations with Shock}{11}
+\contentsline {subsection}{\numberline {8.1}Non-Shock Layer Nodes}{12}
+\contentsline {subsection}{\numberline {8.2}Evolution Equation for Shock Point}{12}

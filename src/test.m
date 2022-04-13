@@ -1,5 +1,11 @@
 clc
 
+
+a = [1-20i, -1+3i]
+
+sort(real(a))
+
+%%
 numVar = 4;
 
 rhsm1 = ones(numVar);
