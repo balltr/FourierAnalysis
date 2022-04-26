@@ -1,8 +1,8 @@
 %% %%%%%%%%%%%%%% 2D Euler Equations With Shock On Top Boundary %%%%%%%%%%%%%%%%%%%%%%
 % Conservative variable w = rho, rho*u, rho*v, rho*E
-clc
-clear
-% close all
+% clc
+% clear
+close all
 % figure
 hold on
 
@@ -16,7 +16,7 @@ f = [w3;
      w3^2/w1+(gamma-1)*(w4-1/2*(w2^2+w3^2)/w1);
      w3/w1*(w4+(gamma-1)*(w4-1/2*(w2^2+w3^2)/w1))];
 w = [w1; w2; w3; w4];
- 
+
 numVar = length(e);
 
 Ae = jacobian(e,[w1,w2,w3,w4]);
@@ -46,7 +46,7 @@ Ve(:,3) = [2*gamma - 2;2*(cd + ud)*(gamma - 1);2*vd*(gamma - 1);(gamma - 1)*(vd^
 Ve(:,4) = [2*gamma - 2;-2*(cd - ud)*(gamma - 1);2*vd*(gamma - 1);(gamma - 1)*(vd^2 + ud^2 - 2*cd*ud) + 2*cd^2];
 
 % Test
-simplify(Ae*Ve-Ve*Ee)
+simplify(Ae*Ve-Ve*Ee);
 
 
 Ef = [vd,  0,       0,       0;
@@ -60,7 +60,7 @@ Vf(:,3) = [2*gamma - 2;2*ud*(gamma - 1);2*(cd + vd)*(gamma - 1);(gamma - 1)*(vd^
 Vf(:,4) = [2*gamma - 2;2*ud*(gamma - 1);-2*(cd - vd)*(gamma - 1);(gamma - 1)*(vd^2 + ud^2 - 2*cd*vd) + 2*cd^2];
 
 % Test
-simplify(Af*Vf-Vf*Ef)
+simplify(Af*Vf-Vf*Ef);
 
 % IC upstream
 gamma = 1.4;
@@ -72,11 +72,11 @@ vu = -Mu*cu; % velocity normal to shock
 tantheta = 0.0;
 uu = -vu*tantheta;
 rhou = gamma*pu/(cu^2);
-rhoeu = pu/(gamma-1)
-rhohu = gamma*rhoeu
-rhoHu = rhohu +rhou*(uu^+0*vu^2)/2
-Hu = rhoHu/rhou
-Eu = rhoeu/rhou+(uu^2+vu^2)/2
+rhoeu = pu/(gamma-1);
+rhohu = gamma*rhoeu;
+rhoHu = rhohu +rhou*(uu^+0*vu^2)/2;
+Hu = rhoHu/rhou;
+Eu = rhoeu/rhou+(uu^2+vu^2)/2;
 
 wu = [rhou
       rhou*uu
@@ -84,19 +84,19 @@ wu = [rhou
 	  rhou*Eu];
 
 % Stationary shock relations
-Md = sqrt((1+(gamma-1)/2*Mu^2)/(gamma*Mu^2-(gamma-1)/2))
-pd = pu*(1+gamma*Mu^2)/(1+gamma*Md^2)
-RTd = RTu*(1+(gamma-1)/2*Mu^2)/(1+(gamma-1)/2*Md^2)
-rhod = pd/RTd
-cd = sqrt(gamma*RTd)
-vd = -Md*cd
-ud = uu
-rhoed = pd/(gamma-1)
+Md = sqrt((1+(gamma-1)/2*Mu^2)/(gamma*Mu^2-(gamma-1)/2));
+pd = pu*(1+gamma*Mu^2)/(1+gamma*Md^2);
+RTd = RTu*(1+(gamma-1)/2*Mu^2)/(1+(gamma-1)/2*Md^2);
+rhod = pd/RTd;
+cd = sqrt(gamma*RTd);
+vd = -Md*cd;
+ud = uu;
+rhoed = pd/(gamma-1);
 % Checking to make sure total enthalpy is conserved
-rhohd = gamma*rhoed
-rhoHd = rhohd +rhod*(ud^+0*vd^2)/2
-Hd = rhoHd/rhod
-Ed = rhoed/rhod+(ud^2+vd^2)/2
+rhohd = gamma*rhoed;
+rhoHd = rhohd +rhod*(ud^+0*vd^2)/2;
+Hd = rhoHd/rhod;
+Ed = rhoed/rhod+(ud^2+vd^2)/2;
 
 % uncomment these to test supersonic case
 % rhod = rhou;
@@ -133,9 +133,9 @@ fEvalUpstream = double(subs(fEvalUpstream));
 adis = 1.0;
 %%%%%%%%%%%%%%%%%% nondimensionalize by dx %%%%%%%%%%%%%%%%%%
 dx = 1;
-dy = 0.25;
-y = 0:dy:30-dy;
-pointStyle = 'g*';
+dy = 1/3;
+y = 0:dy:1;
+pointStyle = 'ro';
 Ny = length(y);
 absAe = Ve*abs(Ee)*inv(Ve);
 absAf = Vf*abs(Ef)*inv(Vf);
@@ -146,7 +146,7 @@ fdSwitch = 1;
 % 0 for full eig spectrum, 1 for eig pairs, 2 for single eig
 eigSwitch = 2;
 % 0 for shock off, 1 for shock on
-shockSwitch = 0;
+shockSwitch = 1;
 % 0 to show eigenvector plots
 vecSwitch = 0;
 
@@ -172,7 +172,7 @@ elseif eigSwitch == 1
 %     waveNumArray = [-eigPair, eigPair, -eigPair2, eigPair2];
     waveNumArray = [-eigPair, eigPair];
 elseif eigSwitch == 2
-    waveNumArray = pi/32;
+%     waveNumArray = pi/5;
     waveNumArray = 0.0;
 end
 
@@ -202,9 +202,8 @@ for ii = 1:length(waveNumArray)
         Mat = full(blktridiag(rhs,rhsm1,rhsp1,Ny));
   
         % Periodic BC's
-%         Mat(1:numVar,end-numVar+1:end) = rhsm1;
-%         Mat(end-numVar+1:end,1:numVar) = rhsp1;
-        
+        Mat(1:numVar,end-numVar+1:end) = rhsm1;
+        Mat(end-numVar+1:end,1:numVar) = rhsp1;
         Mat2 = eye(Ny*numVar);
         
     elseif shockSwitch == 1
@@ -228,13 +227,13 @@ for ii = 1:length(waveNumArray)
 
         % Moving shock BC on top
         wRHSM1 = 1/dy*(Af+absAf);
-        wRHS = -(Ae*ddx-adis*dx*absAe/2*d2dx) - 1/dy*(Af+absAf);
-
+        wRHS = -(Ae*ddx-adis*dx*absAe/2*d2dx) + 1/dy*(Af-absAf); %%%%%% PROBLEM IS HERE %%%%%%%%
+        
         Mat((Ny-1)*numVar+1:Ny*numVar,(Ny-1)*numVar+1:Ny*numVar) = wRHS;
         Mat((Ny-1)*numVar+1:Ny*numVar,(Ny-2)*numVar+1:(Ny-1)*numVar) = wRHSM1;
         
         % for y'
-        yRHS = -2/dy*(eEvalUpstream-eEval)*ddx;
+        yRHS = -2/dy*(eEvalUpstream-eEval)*ddx; %%%%%%%%% CHECK THIS %%%%%%%%%
         Mat((Ny-1)*numVar+1:Ny*numVar, Ny*numVar+1) = yRHS;
 
 
@@ -244,9 +243,9 @@ for ii = 1:length(waveNumArray)
         elseif fdSwitch == 1
             % upwind (backward difference) based off of tan flow direction
             if uu >= 0
-                ddx_y = ddx -dx/2*d2dx;
+                ddx_y = ddx - dx/2*d2dx;
             else
-                ddx_y = ddx +dx/2*d2dx;
+                ddx_y = ddx + dx/2*d2dx;
             end
           
         end
@@ -270,7 +269,7 @@ for ii = 1:length(waveNumArray)
     end
 
     [V,E_mat] = eig(Mat,Mat2);
-    E_vec = diag(E_mat)*dy;
+    E_vec = diag(E_mat);
 
     %plot(real(E_vec),imag(E_vec),'color',CM(colorIdx,:),'marker','x','LineStyle','none')
     plot(real(E_vec),imag(E_vec),pointStyle)
@@ -302,7 +301,8 @@ grid on
 
 % plot eigenvectors
 if vecSwitch == 1
-    for col = length(E_mat):-1:length(E_mat)-10
+%     for col = length(E_mat):-1:length(E_mat)-10
+    for col = 1
         figure
         tiledlayout(2,2)
 
@@ -344,11 +344,6 @@ if vecSwitch == 1
 end
 
 
-vd*2
-(vd+cd)*2
-(vd-cd)*2
-
-
 % if shockSwitch == 1
 %     figure
 %     plot(real(V(end,:)))
@@ -357,3 +352,5 @@ vd*2
 %     hold off
 %     legend('Re(V)','Im(V)')
 % end
+
+M = inv(Mat2)*Mat;

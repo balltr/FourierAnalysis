@@ -111,7 +111,7 @@ figure
 dx = 2.0;
 adis = 1.0;
 
-syms w1 w2 w3 ws gamma real
+syms w1 w2 w3 gamma
 F = [w2;
      w2^2/w1+(gamma-1)*(w3-1/2*w2^2/w1);
      w2/w1*(w3+(gamma-1)*(w3-1/2*w2^2/w1))];

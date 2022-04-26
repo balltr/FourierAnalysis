@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  22 APR 2022 16:30
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  22 APR 2022 13:56
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**Fourier_Analyis.tex
-(./Fourier_Analyis.tex
+**1D_FVM.tex
+(./1D_FVM.tex
 LaTeX2e <2018-04-01> patch level 2
 Babel <3.18> and hyphenation patterns for 84 language(s) loaded.
 (/usr/local/texlive/2018/texmf-dist/tex/latex/base/article.cls
@@ -137,8 +137,8 @@ File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
 (/usr/local/texlive/2018/texmf-dist/tex/latex/parskip/parskip.sty
 Package: parskip 2001/04/09 non-zero parskip adjustments
 )
-(./Fourier_Analyis.aux)
-\openout1 = `Fourier_Analyis.aux'.
+(./1D_FVM.aux)
+\openout1 = `1D_FVM.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 18.
 LaTeX Font Info:    ... okay on input line 18.
@@ -252,101 +252,37 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-(./Fourier_Analyis.toc)
-\tf@toc=\write3
-\openout3 = `Fourier_Analyis.toc'.
+<1D_FVM.png, id=1, 389.455pt x 286.06876pt>
+File: 1D_FVM.png Graphic file (type png)
+<use 1D_FVM.png>
+Package pdftex.def Info: 1D_FVM.png  used on input line 23.
+(pdftex.def)             Requested size: 227.62204pt x 167.19458pt.
 
- [1
+[1
 
-{/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
-<./images/heat_central.jpg, id=20, 1124.2pt x 843.15pt>
-File: ./images/heat_central.jpg Graphic file (type jpg)
-<use ./images/heat_central.jpg>
-Package pdftex.def Info: ./images/heat_central.jpg  used on input line 114.
-(pdftex.def)             Requested size: 341.43306pt x 256.07324pt.
- [3 <./images/heat_central.jpg>]
-<./images/wave_central.jpg, id=24, 1124.2pt x 843.15pt>
-File: ./images/wave_central.jpg Graphic file (type jpg)
-<use ./images/wave_central.jpg>
-Package pdftex.def Info: ./images/wave_central.jpg  used on input line 179.
-(pdftex.def)             Requested size: 341.43306pt x 256.07324pt.
- [4 <./images/wave_central.jpg>]
-<./images/wave_upwind.jpg, id=28, 1646.15pt x 843.15pt>
-File: ./images/wave_upwind.jpg Graphic file (type jpg)
-<use ./images/wave_upwind.jpg>
-Package pdftex.def Info: ./images/wave_upwind.jpg  used on input line 199.
-(pdftex.def)             Requested size: 455.24408pt x 233.1728pt.
-
-Overfull \hbox (21.62407pt too wide) in paragraph at lines 199--201
- [][] 
- []
-
-[5 <./images/wave_upwind.jpg>]
-<./images/1D_euler_eig.jpg, id=32, 1124.2pt x 843.15pt>
-File: ./images/1D_euler_eig.jpg Graphic file (type jpg)
-<use ./images/1D_euler_eig.jpg>
-Package pdftex.def Info: ./images/1D_euler_eig.jpg  used on input line 344.
-(pdftex.def)             Requested size: 341.43306pt x 256.07324pt.
- [6] [7 <./images/1D_euler_eig.jpg>]
-<./images/2D_euler_eig.jpg, id=43, 3372.6pt x 1915.155pt>
-File: ./images/2D_euler_eig.jpg Graphic file (type jpg)
-<use ./images/2D_euler_eig.jpg>
-Package pdftex.def Info: ./images/2D_euler_eig.jpg  used on input line 444.
-(pdftex.def)             Requested size: 455.24408pt x 258.50554pt.
-
-Overfull \hbox (21.62407pt too wide) in paragraph at lines 444--446
- [][] 
- []
-
-[8 <./images/2D_euler_eig.jpg>] [9] [10] [11]
-<./images/shock_point_y.png, id=58, 564.1075pt x 444.66125pt>
-File: ./images/shock_point_y.png Graphic file (type png)
-<use ./images/shock_point_y.png>
-Package pdftex.def Info: ./images/shock_point_y.png  used on input line 745.
-(pdftex.def)             Requested size: 170.71652pt x 134.5664pt.
- [12 <./images/shock_point_y.png>]
-<./images/shock_point_x.jpg, id=64, 374.39874pt x 201.75375pt>
-File: ./images/shock_point_x.jpg Graphic file (type jpg)
-<use ./images/shock_point_x.jpg>
-Package pdftex.def Info: ./images/shock_point_x.jpg  used on input line 762.
-(pdftex.def)             Requested size: 170.71652pt x 91.99512pt.
-
-Overfull \hbox (22.67873pt too wide) detected at line 808
-[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 y[]\OT1/cmr/bx/n/10 F[]\OT1/cmr/m/n/10 ) = 
-([] \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 y[]\OT1/cmr/m/n/10 ) [] + \OML/cmm/m/
-it/10 ^^O\OT1/cmr/bx/n/10 F[]\OT1/cmr/m/n/10 ([]) []
- []
-
-[13 <./images/shock_point_x.jpg>] [14] [15] (./Fourier_Analyis.aux) ) 
+{/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./1D_FV
+M.png>] (./1D_FVM.aux) ) 
 Here is how much of TeX's memory you used:
- 2659 strings out of 492649
- 37432 string characters out of 6129622
- 121157 words of memory out of 5000000
- 6501 multiletter control sequences out of 15000+600000
- 9642 words of font info for 35 fonts, out of 8000000 for 9000
+ 2551 strings out of 492649
+ 35408 string characters out of 6129622
+ 107739 words of memory out of 5000000
+ 6416 multiletter control sequences out of 15000+600000
+ 5021 words of font info for 19 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 41i,10n,29p,563b,221s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/loca
-l/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local
-/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/
-texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx5.pfb></usr/local/te
-xlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/local/texl
-ive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texli
-ve/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texliv
-e/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/
-2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/20
-18/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2018
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2018/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2018/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2018/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2018/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2018/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/2018/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on Fourier_Analyis.pdf (15 pages, 975564 bytes).
+ 41i,5n,29p,273b,212s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2018/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmbx10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmex10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmmi10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmmi7.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmr10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmr7.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmsy10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmsy7.pfb>
+Output written on 1D_FVM.pdf (1 page, 75871 bytes).
 PDF statistics:
- 126 PDF objects out of 1000 (max. 8388607)
- 84 compressed objects within 1 object stream
+ 43 PDF objects out of 1000 (max. 8388607)
+ 29 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 36 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 6 words of extra memory for PDF output out of 10000 (max. 10000000)
 

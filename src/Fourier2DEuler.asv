@@ -257,10 +257,7 @@ if shockSwitch == 1
     title('Shock Position Normalized Eigenvectors')
     xlabel('DOF')
 end
-% plot eigenvalues colored by magnitude of corresponding normalized eigenvector
-figure
-scatplot = scatter(real(E_vec),imag(E_vec),25,Vnorm,'filled');
-scatplot.MarkerEdgeColor = 'k';
+scatplot scatter(real(E_vec),imag(E_vec),25,Vnorm,'filled')
 axis equal
 grid on
 

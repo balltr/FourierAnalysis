@@ -1,0 +1,17 @@
+
+clear
+clc
+
+
+v0 = 3.55;
+eps = 0.01;
+
+x0 = 0:0.1:1;
+x1 = 0:160;
+
+v = v0*ones(1,length(x1)) + eps*sin(2*pi*x0).*exp(4);
+figure
+plot(x1,v)
+
+
+

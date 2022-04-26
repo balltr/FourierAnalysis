@@ -701,6 +701,8 @@
 	 
 	 $$ x_\xi \frac{\partial}{\partial \tau} \left( y_\eta \mathbf{w} \right) + \frac{\partial}{\partial \xi} \tilde{\mathbf{F}}_\xi + \frac{\partial}{\partial \eta} \tilde{\mathbf{F}}_\eta = 0 $$
 	 
+	 **** JUST WRITE $|J|$ DOES NOT VARY WITH TAU *****
+	 
 	 $$ x_\xi \frac{\partial}{\partial \tau} \left( y_\eta \mathbf{w} \right) + \frac{\partial}{\partial \xi} (y_\eta \mathbf{F}_x) + \frac{\partial}{\partial \eta} (-y_\xi \mathbf{F}_x + x_\xi (\mathbf{F}_y - y_\tau \mathbf{w})) = 0$$
 	 
 	 $$ x_\xi (y_{\eta \tau} \mathbf{w} + y_\eta \mathbf{w}_\tau) + y_\eta \frac{\partial \mathbf{F}_x}{\partial \xi} - y_\xi \frac{\partial \mathbf{F}_x}{\partial \eta} + x_\xi \left(\frac{\partial \mathbf{F}_y}{\partial \eta} - y_{\eta \tau} \mathbf{w} - y_\tau \mathbf{w}_\eta \right) = 0$$
@@ -716,6 +718,8 @@
 	 The spacial curvilinear coordinates can be converted back to Cartesian coordinates and equation (\ref{curvilinear}) can be written as
 	 
 	 $$	\mathbf{w}_\tau + \frac{\partial \mathbf{F}_x}{\partial x} + \frac{\partial \mathbf{F}_y}{\partial y} = 0 $$
+	 
+	 **** NOTICE HERE THAT COORDINATE TRANSFORMATION WAS NOT REALLY NECESSARY SINCE CV'S DON'T CHANGE SIZE ****
 	
 	which can be linearized to
 	
@@ -896,7 +900,7 @@
 	
 	The coefficients for $\mathbf{w}_N'$ are
 	
-	$$ - \left( \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2 \Delta x}\right) - \frac{|\mathbf{A}_x| \Delta x}{2} \left( \frac{\mathbf{w}_{i+1}' - 2 \mathbf{w}_i' + \mathbf{w}_{i-1}'}{(\Delta x)^2} \right) \right) -  \frac{\mathbf{A}_y + |\mathbf{A}_y|}{\Delta y} $$
+	$$ - \left( \mathbf{A}_x \left( \frac{\mathbf{w}_{i+1}' - \mathbf{w}_{i-1}'}{2 \Delta x}\right) - \frac{|\mathbf{A}_x| \Delta x}{2} \left( \frac{\mathbf{w}_{i+1}' - 2 \mathbf{w}_i' + \mathbf{w}_{i-1}'}{(\Delta x)^2} \right) \right) +  \frac{\mathbf{A}_y - |\mathbf{A}_y|}{\Delta y} $$
 	
 	The coefficients for $\mathbf{w}_{N-1}'$ are
 	
