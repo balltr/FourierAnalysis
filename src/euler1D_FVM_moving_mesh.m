@@ -6,8 +6,9 @@ close all
 global gam wu wdinit meshType
 
 % mesh parameters
-dx = 0.05;
-x = [0, dx/2:dx:1.0+dx/2]; % initial locations of cell faces
+dx = 1; % dx for uniform cells
+L = 80;
+x = [0, dx/2:dx:L+dx/2]; % initial locations of cell faces
 Nx = length(x)-1; % total number of cells
 dxArray = x(2:Nx+1) - x(1:Nx); % initial cell widths
 
@@ -23,12 +24,12 @@ meshType = 0;
 RK4switch = 1;
 
 % upstream conditions
-Ms = 3;
+Mu = 3;
 gam = 1.4;
 pu = 1; % non-dimensionalized in P and RT
 RTu = 1;
 cu = gam^(1/2);
-uu = Ms*cu;
+uu = Mu*cu;
 rhou = gam*pu/(cu^2);
 rhoeu = pu/(gam-1);
 Eu = rhoeu/rhou+(uu^2)/2;
@@ -57,14 +58,17 @@ wd = repmat(wdinit,1,Nx); % array to store downstream cons. vars
 
 % perturbations
 if RK4switch == 1
-    
     eps = 0.01;
-    for i=1:size(wd,2)
-        wd(:,i) = wd(:,i)*(1+eps*sin(i/size(wd,2)*pi));
-    end
+    A = dx/10;
+%     for i=1:size(wd,2)
+%         for var = 2
+%             wd(var,i) = wd(var,i) + eps*sin(4*pi*x(i))*exp(-x(i));
+%         end
+%     end
+    x(1) = x(1)+A;
     
-else
-    
+elseif RK4switch == 0
+    %%%%%%%%%%%%%%% USED FOR CHECKING FOURIER ANALYSIS %%%%%%%%%%%%%%%
     eps = 0.001;
     Nvar = 4;
     M2 = zeros(4*Nx+1,4*Nx+1); % sized with 4 variables to compare to Fourier Analysis
@@ -98,7 +102,6 @@ else
             end
             wnum4var = reshape(wnum4var,[],1); % reshape matrix into column array
             M2(:,Nvar*(i-1)+var) = [wnum4var; xnum];
-            
         end
     end
     % perturb x-pos after loop over variables
@@ -117,7 +120,7 @@ else
 
 
     M2 = M2(Inds,Inds);
-    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end
 
 
@@ -141,7 +144,8 @@ if RK4switch == 1
 
         % plot solution
         figure(1)
-        tiledlayout(2,2);
+        cvplot = tiledlayout(2,2);
+        title(cvplot,'Shock at x=0')
         nexttile
         stairs(x,cat(2,wd(1,:),wd(1,Nx)))
         title('rho')
@@ -160,8 +164,10 @@ if RK4switch == 1
         ylabel('x')
 
         drawnow
+        
     end
 end
+
 
 
 function [wd, x] = RK4(wd,x,dt)

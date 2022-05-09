@@ -1,10 +1,10 @@
 %% %%%%%%%%%%%%%% 2D Euler Equations With Shock On Top Boundary %%%%%%%%%%%%%%%%%%%%%%
 % Conservative variable w = rho, rho*u, rho*v, rho*E
 clc
-clear
-close all
-figure
-hold on
+clearvars
+% close all
+% figure
+% hold on
 
 syms w1 w2 w3 w4 gamma Mu rhod ud vd cd rhou uu vu cu 
 e = [w2;
@@ -94,7 +94,7 @@ adis = 1.0;
 %%%%%%%%%%%%%%%%%% nondimensionalize by dx %%%%%%%%%%%%%%%%%%
 dx = 1.0;
 dy = 1.0;
-y = 0:dy:160;
+y = 0:dy:80;
 Ny = length(y);
 absAe = Ve*abs(Ee)*inv(Ve);
 absAf = Vf*abs(Ef)*inv(Vf);
@@ -218,26 +218,26 @@ for ii = 1:length(kdxArray)
         Mat(Ny*numVar+1,Ny*numVar-3:Ny*numVar+1) = wpshock;
     end
     
-    [V,E_mat] = eig(Mat,Mat2);
+    [V,E_mat,W] = eig(Mat2\Mat);
     E_vec = diag(E_mat);
 
-    plot(real(E_vec),imag(E_vec),'color',CM(colorIdx,:),'marker','x','LineStyle','none')
-    hold on
+%     plot(real(E_vec),imag(E_vec),'color',CM(colorIdx,:),'marker','x','LineStyle','none')
+%     hold on
 end
-if shockSwitch == 1
-    if fdSwitch == 1
-        title('2D Euler Eigenvalues With Shock, Upwind')
-    elseif fdSwitch == 0
-        title('2D Euler Eigenvalues With Shock, Central Difference')
-    end
-elseif shockSwitch == 0
-    title('2D Euler Eigenvalues, No Shock')
-end
-xlabel('Re'), ylabel('Im')
-axis equal
-grid on
-colormap('turbo')
-colorbar('Ticks',[])
+% if shockSwitch == 1
+%     if fdSwitch == 1
+%         title('2D Euler Eigenvalues With Shock, Upwind')
+%     elseif fdSwitch == 0
+%         title('2D Euler Eigenvalues With Shock, Central Difference')
+%     end
+% elseif shockSwitch == 0
+%     title('2D Euler Eigenvalues, No Shock')
+% end
+% xlabel('Re'), ylabel('Im')
+% axis equal
+% grid on
+% colormap('turbo')
+% colorbar('Ticks',[])
 
 % normalize eigenvectors
 if shockSwitch == 1
@@ -247,6 +247,7 @@ if shockSwitch == 1
     end
     % sort eigenvectors in descending order
     [~, ind] = sort((Vnorm),'descend');
+%     [~, ind] = sort(real(E_vec),'descend');
     Vnorm = Vnorm(ind);
     V = V(:, ind);
     E_mat = E_mat(ind, ind);
@@ -311,5 +312,68 @@ if vecSwitch == 1
     end
 end
 
+% % weighted average of 25 most dominant eigenvectors
+% Nvec = Ndof
+% VnormSum = sum(Vnorm(1:Nvec));
+% Vweight = Vnorm(1:Nvec)/VnormSum;
+% weightedOmega = 0;
+% for i = 1:Nvec
+%     weightedOmega = weightedOmega + abs(imag(E_vec(i)))*Vweight(i);
+% end
+% weightedOmega
 
-M = inv(Mat2)*Mat;
+
+
+
+
+% 
+% % wp0 = [0,0,0,0];
+% % wp0 = repmat(wp0,length(y),1);
+% % wp0(end+1) = 0;
+% IC = zeros(size(V,1),1);
+% IC(end,1) = 1.0;
+% 
+% C = V\IC;
+% 
+% % Pick a time
+% t = 0;
+% 
+% Elam = diag(exp(E_vec*t));
+% w = V*Elam*C;
+% 
+% figure
+% tiledlayout(2,2)
+% 
+% nexttile
+% plot(real(w(1:4:end-shockSwitch)),'LineWidth',1.5)
+% hold on
+% plot(imag(w(1:4:end-shockSwitch)),'LineWidth',1.5)
+% hold off
+% title('\rho')
+% xlabel('y')
+% 
+% nexttile
+% plot(real(w(2:4:end-shockSwitch)),'LineWidth',1.5)
+% hold on
+% plot(imag(w(2:4:end-shockSwitch)),'LineWidth',1.5)
+% hold off
+% title('\rho u')
+% xlabel('y')
+% 
+% nexttile
+% plot(real(w(3:4:end-shockSwitch)),'LineWidth',1.5)
+% hold on
+% plot(imag(w(3:4:end-shockSwitch)),'LineWidth',1.5)
+% hold off
+% title('\rho v')
+% xlabel('y')
+% 
+% nexttile
+% plot(real(w(4:4:end-shockSwitch)),'LineWidth',1.5)
+% hold on
+% plot(imag(w(4:4:end-shockSwitch)),'LineWidth',1.5)
+% hold off
+% title('\rho E')
+% xlabel('y')
+
+
