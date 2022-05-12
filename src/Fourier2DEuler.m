@@ -108,6 +108,8 @@ eigSwitch = 2;
 shockSwitch = 1;
 % 1 to show eigenvector plots
 vecSwitch = 1;
+% 0 for normalized by shock magnitude, 1 for least damped eigenvalue
+vecSort = 1;
 
 if eigSwitch == 0
     kdxArray = -pi : pi/10 : pi;
@@ -128,7 +130,8 @@ elseif eigSwitch == 1
 %     kdxArray = [-eigPair, eigPair, -eigPair2, eigPair2];
     kdxArray = [-eigPair, eigPair];
 elseif eigSwitch == 2
-    kdxArray = pi/10;
+%     kdxArray = pi/10;
+    kdxArray = 0;
 end
 
 CM = turbo(length(kdxArray));
@@ -245,9 +248,14 @@ if shockSwitch == 1
     for i = 1:size(Vnorm,2)
         Vnorm(i) = abs(V(end,i))/norm(V(:,i),2);
     end
-    % sort eigenvectors in descending order
-    [~, ind] = sort((Vnorm),'descend');
-%     [~, ind] = sort(real(E_vec),'descend');
+    if vecSwitch == 0
+        % sort eigenvectors in descending order
+        [~, ind] = sort((Vnorm),'descend');
+    elseif vecSwitch == 1
+        % sort eigenvalues by least negative real part
+        [~, ind] = sort(real(E_vec),'descend');
+    end
+    
     Vnorm = Vnorm(ind);
     V = V(:, ind);
     E_mat = E_mat(ind, ind);

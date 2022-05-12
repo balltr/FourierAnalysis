@@ -1,14 +1,19 @@
 % Creates initial condition for Oblique_Shock_Periodic test case
 % Adds perturbation from eigenvector to base flow state
 
-close all
+% close all
 clearvars
 clc
 
 % change these to match desired input files
-V_filename = 'V_pi_10_upwind.txt';
+V_filename = 'V_0_upwind_tantheta_1.txt';
+Vcol = 67;
 regular_b0_filename = 'pi_10_b0.grd';
 regular_b1_filename = 'pi_10_b1.grd';
+
+% 0: zero wavenumber
+% 1: any other wavenumber
+kdxSwitch = 0;
 
 % IC upstream
 gamma = 1.4;
@@ -55,12 +60,12 @@ delete rstrt1_b1.txt
 [x1,y1] = getGrid(rstrt0_b1);
 
 % perturb mesh at interface
-[y0new,rstrt0_b0] = interfaceFun(rstrt0_b0);
-[y1new,rstrt0_b1] = interfaceFun(rstrt0_b1);
+[y0new,rstrt0_b0] = interfaceFun(rstrt0_b0,V,Vcol);
+[y1new,rstrt0_b1] = interfaceFun(rstrt0_b1,V,Vcol);
 
 % perturb flow variables
-rstrt0_d0_b0 = initCond(0,rhou,rhou*uu,rhou*vu,rhou*Eu,V,x0,y0);
-rstrt0_d0_b1 = initCond(1,rhod,rhod*ud,rhod*vd,rhod*Ed,V,x1,y1);
+rstrt0_d0_b0 = initCond(0,kdxSwitch,rhou,rhou*uu,rhou*vu,rhou*Eu,V,Vcol,x0,y0);
+rstrt0_d0_b1 = initCond(1,kdxSwitch,rhod,rhod*ud,rhod*vd,rhod*Ed,V,Vcol,x1,y1);
 
 % convert conservative variables to primitive variables
 rstrt0_d0_b0 = varConvert(rstrt0_d0_b0,gamma);
@@ -87,7 +92,7 @@ vExport('rstrt0_v1_b1.txt',x1,y1new)
 
 
 % plot a variable at target x and y to see shape
-xtarget = 10;
+xtarget = 0;
 ytarget = 0;
 ix = find(abs(x1-xtarget)<1e-5);
 iy = find(abs(y1-ytarget)<1e-5);
@@ -128,28 +133,30 @@ end
 end
 
 
-function [ynew,table] = interfaceFun(table)
+function [ynew,table] = interfaceFun(table,V,Vcol)
 ynew = zeros(cell2mat(table(1,2)),1);
 % get dx and L from file
 dx = cell2mat(table(6,2));
 L = cell2mat(table(3,2));
 % interface purturbation amplitude
-A = dx/10; 
+A = real(V(end,Vcol));
 for i = 1:cell2mat(table(1,2))
     ynew(i) = cell2mat(table(i+1,3));
     if ynew(i) == 0
+        % no perturbation - do nothing
+        
         % uniform perturbation
-%         ynew(i) = A;
+        ynew(i) = A;
         
         % sin perturbation
-        ynew(i) = A * sin(2*pi*(cell2mat(table(i+1,2)))/L);
+%         ynew(i) = A * sin(2*pi*(cell2mat(table(i+1,2)))/L);
     end
     table(i+1,3) = {ynew(i)};
 end
 end
 
 
-function [IC] = initCond(block,rho,rhou,rhov,rhoE,V,x,y)
+function [IC] = initCond(block,kdxSwitch,rho,rhou,rhov,rhoE,V,Vcol,x,y)
 % get dx and L from file
 dx = x(5);
 L = x(2);
@@ -159,12 +166,11 @@ IC(:,2) = rhou;
 IC(:,3) = rhov;
 IC(:,4) = rhoE;
 
-Vcol = 13;
 % perturb block 1
 if block == 1
     figure
     tileplot = tiledlayout(2,2);
-    title(tileplot,'conservative variable eigenvalues')
+    title(tileplot,'conservative variable eigenvectors')
     for var = 1:4
         realVtemp = real(V(var:4:end-1,Vcol)); % stores eigenvector for current variable
         nexttile
@@ -174,7 +180,12 @@ if block == 1
         realVtemp = flip(realVtemp); % positions shock at index 1
         for i = 1:length(x)
             vidx = round(abs(y(i))/dx + 1); % get index for eigenvector
-            IC(i,var) = IC(i,var) + 2*realVtemp(vidx)*cos(2*pi*x(i)/L);
+            if kdxSwitch == 0
+                IC(i,var) = IC(i,var) + 2*realVtemp(vidx);
+            else
+                IC(i,var) = IC(i,var) + 2*realVtemp(vidx)*cos(2*pi*x(i)/L);
+            end
+            
         end
     end
 end
@@ -210,7 +221,7 @@ fprintf(fid,'npnt = %d, nseg = %d, ntri = %d\n',npnt,nseg,ntri);
 fprintf(fid,'END OF HEADER\n');
 % add data
 for i = 1:size(data,1)
-    fprintf(fid,'%e %e %e %e\n',data(i,1),data(i,2),data(i,3),data(i,4));
+    fprintf(fid,'%.16e %.16e %.16e %.16e\n',data(i,1),data(i,2),data(i,3),data(i,4));
 end
 % create footer
 if block == 0
