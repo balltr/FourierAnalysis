@@ -6,6 +6,7 @@ clearvars
 % figure
 % hold on
 
+
 syms w1 w2 w3 w4 gamma Mu rhod ud vd cd rhou uu vu cu 
 e = [w2;
      w2^2/w1+(gamma-1)*(w4-1/2*(w2^2+w3^2)/w1);
@@ -55,14 +56,15 @@ Vf(:,3) = [2*gamma - 2;2*ud*(gamma - 1);2*(cd + vd)*(gamma - 1);(gamma - 1)*(vd^
 Vf(:,4) = [2*gamma - 2;2*ud*(gamma - 1);-2*(cd - vd)*(gamma - 1);(gamma - 1)*(vd^2 + ud^2 - 2*cd*vd) + 2*cd^2];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 % IC upstream
 gamma = 1.4;
 pu = 1; % non-dimensionalized in P and RT
 RTu = 1;
-Mu = 3.0;
+Mu = 3;
 cu = sqrt(gamma*RTu);
 vu = -Mu*cu; % velocity normal to shock
-tantheta = 0.1;
+tantheta = 0;
 uu = -vu*tantheta;
 rhou = gamma*pu/(cu^2);
 
@@ -94,7 +96,7 @@ adis = 1.0;
 %%%%%%%%%%%%%%%%%% nondimensionalize by dx %%%%%%%%%%%%%%%%%%
 dx = 1.0;
 dy = 1.0;
-y = 0:dy:80;
+y = 0:dy:20;
 Ny = length(y);
 absAe = Ve*abs(Ee)*inv(Ve);
 absAf = Vf*abs(Ef)*inv(Vf);
@@ -102,16 +104,26 @@ absAf = Vf*abs(Ef)*inv(Vf);
 
 % 0 for central diff or 1 for upwind
 fdSwitch = 1;
-% 0 for full eig spectrum, 1 for eig pairs, 2 for single eig
-eigSwitch = 2;
+% 0 for full wavenumber spectrum, 1 for wavenumber pairs, 2 for single wavenumber
+wavenumSwitch = 2;
 % 0 for shock off, 1 for shock on
 shockSwitch = 1;
 % 1 to show eigenvector plots
-vecSwitch = 1;
-% 0 for normalized by shock magnitude, 1 for least damped eigenvalue
+vecPlot = 1;
+% 0 for no sort, 1 for normalized by shock contribution, 2 for least damped eigenvalue
 vecSort = 1;
+% 1 to plot normalized eigenvector
+normVecPlot = 1;
+% 1 to plot eigenvalues
+eigPlot = 1;
+% 1 to circle eigenvalues of interest
+circleEig = 0;
+% 1 to scale eigenvalues by u + Mc
+eigScale = 0;
+% 1 to plot reference lines on eigenvalue plot
+refPlot = 0;
 
-if eigSwitch == 0
+if wavenumSwitch == 0
     kdxArray = -pi : pi/10 : pi;
 
 %     % integer divisions of pi if nondimensionalized by kdx
@@ -124,12 +136,12 @@ if eigSwitch == 0
 %             denom = denom+1;
 %         end
 %     end
-elseif eigSwitch == 1
+elseif wavenumSwitch == 1
     eigPair = pi/4; % +\-
 %     eigPair2 = pi/2;
 %     kdxArray = [-eigPair, eigPair, -eigPair2, eigPair2];
     kdxArray = [-eigPair, eigPair];
-elseif eigSwitch == 2
+elseif wavenumSwitch == 2
 %     kdxArray = pi/10;
     kdxArray = 0;
 end
@@ -167,6 +179,18 @@ for ii = 1:length(kdxArray)
         
     elseif shockSwitch == 1
         
+        if fdSwitch == 0
+            % central difference
+            ddx_y = ddx;
+        elseif fdSwitch == 1
+            % upwind (backward difference) based off of tan flow direction
+            if uu >= 0
+                ddx_y = ddx - dx/2*d2dx;
+            else
+                ddx_y = ddx + dx/2*d2dx;
+            end
+        end
+        
         %%%%%%%%%%% Matrix for d(w,y)/dt %%%%%%%%%%%%%%%%%%%
         Ndof = Ny*numVar+1;
         Mat2 = eye(Ndof);
@@ -184,24 +208,11 @@ for ii = 1:length(kdxArray)
         % Moving shock BC on top
         wRHSM1 = 1/dy*(Af+absAf);
         wRHS = -(Ae*ddx-adis*dx*absAe/2*d2dx) + 1/dy*(Af-absAf);
-        %   wRHSP1 = zeros(numVar);
+        %   wRHSP1 = zeros(numVar); % not necessary but here for completeness
 
         Mat((Ny-1)*numVar+1:Ny*numVar,(Ny-1)*numVar+1:Ny*numVar) = wRHS;
         Mat((Ny-1)*numVar+1:Ny*numVar,(Ny-2)*numVar+1:(Ny-1)*numVar) = wRHSM1;
-
-        if fdSwitch == 0
-            % central difference
-            ddx_y = ddx;
-        elseif fdSwitch == 1
-            % upwind (backward difference) based off of tan flow direction
-            if uu >= 0
-                ddx_y = ddx - dx/2*d2dx;
-            else
-                ddx_y = ddx + dx/2*d2dx;
-            end
-          
-        end
-
+        
         % for y'
         yRHS = 2/dy*(eEvalUpstream-eEval)*ddx;
         Mat((Ny-1)*numVar+1:Ny*numVar, Ny*numVar+1) = yRHS;
@@ -248,10 +259,13 @@ if shockSwitch == 1
     for i = 1:size(Vnorm,2)
         Vnorm(i) = abs(V(end,i))/norm(V(:,i),2);
     end
-    if vecSwitch == 0
+    if vecSort == 0
+        % no sorting
+        ind = 1:length(Vnorm);
+    elseif vecSort == 1
         % sort eigenvectors in descending order
         [~, ind] = sort((Vnorm),'descend');
-    elseif vecSwitch == 1
+    elseif vecSort == 2
         % sort eigenvalues by least negative real part
         [~, ind] = sort(real(E_vec),'descend');
     end
@@ -261,20 +275,59 @@ if shockSwitch == 1
     E_mat = E_mat(ind, ind);
     E_vec = E_vec(ind);
     
-    figure
-    plot(Vnorm,'x-')
-    title('Shock Position Normalized Eigenvectors')
-    xlabel('DOF')
+    if normVecPlot == 1
+        figure
+        plot(Vnorm,'ko')
+        title('Value of V_{shock} for Each Eigenvector')
+%         title('k \Delta x = \pi/20,    M = 3,    tan(\theta) = 4')
+        xlabel('DOF')
+        ylabel('V_{shock}')
+        axis([0 length(Vnorm)+10 0 max(Vnorm)*1.2])
+        grid on
+    end
 end
-% plot eigenvalues colored by magnitude of corresponding normalized eigenvector
-figure
-scatplot = scatter(real(E_vec),imag(E_vec),25,Vnorm,'filled');
-scatplot.MarkerEdgeColor = 'k';
-axis equal
-grid on
+
+if eigPlot == 1
+    % plot eigenvalues colored by magnitude of corresponding normalized eigenvector
+    figure
+    if eigScale == 1
+        E_vec = E_vec/(kdx*(uu+Mu*cu));
+    end
+    scatplot = scatter(flip(real(E_vec)),flip(imag(E_vec)),25,flip(Vnorm),'filled');
+%     scatplot = scatter(real(E_vec),imag(E_vec),25,'filled');
+    scatplot.MarkerEdgeColor = 'k';
+    axis equal
+    grid on
+    colorbar
+    if fdSwitch == 0
+%         title(['upwinding off,   tantheta = ' num2str(tantheta),',   '   'Mu = ' num2str(Mu)],...
+%                 'test')
+%         title('Fourier Analysis Eigenvalues')
+    elseif fdSwitch == 1
+%         title(['upwinding on,   tantheta = ' num2str(tantheta),',   '   'Mu = ' num2str(Mu)],...
+%                 'test')
+%         title('Fourier Analysis Eigenvalues')
+    end
+    xlabel('Re(\lambda)'), ylabel('Im(\lambda)')
+    if refPlot == 1
+        refline([0, -(2*pi)/( (2*pi/kdx) / uu)]);
+        xline(max(real(E_vec)));
+    end
+    
+    
+    
+    if circleEig == 1
+        circleEigRows = [2,64,73,83];
+        hold on
+        for i = 1:length(circleEigRows)
+            plot(real(E_vec(circleEigRows(i))),imag(E_vec(circleEigRows(i))),'ro','MarkerSize',15)
+        end
+        hold off
+    end
+end
 
 % plot eigenvectors
-if vecSwitch == 1
+if vecPlot == 1
     for col = 1:2
         figure
         tiledlayout(2,2)
@@ -285,7 +338,7 @@ if vecSwitch == 1
         plot(imag(V(1:4:end-shockSwitch,col)),'LineWidth',1.5)
         hold off
         title('\rho')
-        xlabel('y')
+        xlabel('N_y')
 
         nexttile
         plot(real(V(2:4:end-shockSwitch,col)),'LineWidth',1.5)
@@ -293,7 +346,7 @@ if vecSwitch == 1
         plot(imag(V(2:4:end-shockSwitch,col)),'LineWidth',1.5)
         hold off
         title('\rho u')
-        xlabel('y')
+        xlabel('N_y')
 
         nexttile
         plot(real(V(3:4:end-shockSwitch,col)),'LineWidth',1.5)
@@ -301,7 +354,7 @@ if vecSwitch == 1
         plot(imag(V(3:4:end-shockSwitch,col)),'LineWidth',1.5)
         hold off
         title('\rho v')
-        xlabel('y')
+        xlabel('N_y')
 
         nexttile
         plot(real(V(4:4:end-shockSwitch,col)),'LineWidth',1.5)
@@ -309,79 +362,8 @@ if vecSwitch == 1
         plot(imag(V(4:4:end-shockSwitch,col)),'LineWidth',1.5)
         hold off
         title('\rho E')
-        xlabel('y')
+        xlabel('N_y')
         
-        if shockSwitch == 1
-            txt=['eigenvalue = ',num2str(E_mat(col,col))];
-        else
-            txt=['eigenvalue = ',num2str(E_mat(col,col))];
-        end
-        sgtitle(txt)
+        sgtitle(['Eigenvalue: ',num2str(E_mat(col,col))])
     end
 end
-
-% % weighted average of 25 most dominant eigenvectors
-% Nvec = Ndof
-% VnormSum = sum(Vnorm(1:Nvec));
-% Vweight = Vnorm(1:Nvec)/VnormSum;
-% weightedOmega = 0;
-% for i = 1:Nvec
-%     weightedOmega = weightedOmega + abs(imag(E_vec(i)))*Vweight(i);
-% end
-% weightedOmega
-
-
-
-
-
-% 
-% % wp0 = [0,0,0,0];
-% % wp0 = repmat(wp0,length(y),1);
-% % wp0(end+1) = 0;
-% IC = zeros(size(V,1),1);
-% IC(end,1) = 1.0;
-% 
-% C = V\IC;
-% 
-% % Pick a time
-% t = 0;
-% 
-% Elam = diag(exp(E_vec*t));
-% w = V*Elam*C;
-% 
-% figure
-% tiledlayout(2,2)
-% 
-% nexttile
-% plot(real(w(1:4:end-shockSwitch)),'LineWidth',1.5)
-% hold on
-% plot(imag(w(1:4:end-shockSwitch)),'LineWidth',1.5)
-% hold off
-% title('\rho')
-% xlabel('y')
-% 
-% nexttile
-% plot(real(w(2:4:end-shockSwitch)),'LineWidth',1.5)
-% hold on
-% plot(imag(w(2:4:end-shockSwitch)),'LineWidth',1.5)
-% hold off
-% title('\rho u')
-% xlabel('y')
-% 
-% nexttile
-% plot(real(w(3:4:end-shockSwitch)),'LineWidth',1.5)
-% hold on
-% plot(imag(w(3:4:end-shockSwitch)),'LineWidth',1.5)
-% hold off
-% title('\rho v')
-% xlabel('y')
-% 
-% nexttile
-% plot(real(w(4:4:end-shockSwitch)),'LineWidth',1.5)
-% hold on
-% plot(imag(w(4:4:end-shockSwitch)),'LineWidth',1.5)
-% hold off
-% title('\rho E')
-% xlabel('y')
-
-

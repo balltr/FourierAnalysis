@@ -1,13 +1,13 @@
 clc
 clear
-close all
+% close all
 
 
 %%%%%%%%%%% 1D Wave Equation %%%%%%%%%%%%%%%
 figure
 
-a = 1.0;
-dx = 1.0;
+a = 2.0;
+dx = 2.0;
 adis = 1.0;
 
 for kdx=-pi:pi/100:pi
@@ -172,8 +172,8 @@ close all
 
 figure
 
-syms w1 w2 w3 w4 positive;
-syms gamma positive;
+syms w1 w2 w3 w4;
+syms gamma;
 e = [w2;
      w2^2/w1+(gamma-1)*(w4-1/2*(w2^2+w3^2)/w1);
      w2*w3/w1;
@@ -187,29 +187,28 @@ numVar = length(e);
 
 Ae = jacobian(e,[w1,w2,w3,w4]);
 Af = jacobian(f,[w1,w2,w3,w4]);
-syms rho u v gamma c positive
+syms rho u v gamma c
 Ae = subs(Ae,{w1,w2,w3,w4},{rho,rho*u,rho*v,rho*(c^2/(gamma*(gamma-1)) +1/2*(u^2+v^2))});
 Af = subs(Af,{w1,w2,w3,w4},{rho,rho*u,rho*v,rho*(c^2/(gamma*(gamma-1)) +1/2*(u^2+v^2))});
 
-[Ve,Ee] = eig(Ae);
-[Vf,Ef] = eig(Af);
-
 gamma = 1.4;
-pu = 1.015e5; % Pa
-Tu = 300; % K
-Rbar = 8314; % j/(kmol K)
-MW = 28.9;
-R = Rbar/MW;
-c = sqrt(gamma*R*Tu);
-rho = pu/(R*Tu);
-eu = R*Tu/(gamma-1);
-u = 4*c;
-v = -0.7*c;
+tantheta = 1;
+
+% flow variables
+p = 1;
+RT = 1;
+c = sqrt(gamma*RT);
+M = 3;
+v = -M*c; % velocity normal to shock
+u = -v*tantheta;
+rho = gamma*p/(c^2);
 
 Ae = double(subs(Ae));
+[Ve,Ee] = eig(Ae);
 Ve = double(subs(Ve));
 Ee = double(subs(Ee));
 Af = double(subs(Af));
+[Vf,Ef] = eig(Af);
 Vf = double(subs(Vf));
 Ef = double(subs(Ef));
 
@@ -218,12 +217,12 @@ absAf = Vf*abs(Ef)*inv(Vf);
 
 dx = 1.0;
 dy = 1.0;
-y = 0:dy:30;
+y = 0:dy:59;
 Ny = length(y);
 adis = 1.0;
 
-% for kdx = pi/30
-for kdx = -pi:pi/30:pi
+for kdx = pi/2
+% for kdx = -pi:pi/5:pi
 
   ddx = 1i*sin(kdx)/dx;
   d2dx = -(2-2*cos(kdx))/dx^2;
@@ -240,11 +239,12 @@ for kdx = -pi:pi/30:pi
   
   E = eig(Mat);
   
-  plot(real(E),imag(E),'x')
+%   plot(real(E),imag(E),'x')
+  scatter(real(E),imag(E),'k','filled')
   hold on
 end
-title('2D Euler Eigenvalues')
+% title('Fully Periodic 2D Euler Eigenvalues')
 grid on
-xlabel('Re')
-ylabel('Im')
+xlabel('Re(\lambda)')
+ylabel('Im(\lambda)')
 axis equal

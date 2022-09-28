@@ -20,7 +20,7 @@ meshType = 0;
 % EXPORT VARIABLE TYPE
     % 0: conservative
     % 1: primitive
-varType = 0;
+varType = 1;
 
 % UPSTREAM CONDITIONS
 Mu = 3;
@@ -63,7 +63,7 @@ t = 0;
 % dt = CFL*min(dxArray)/ud; % use smallest dx for time step
 % tfinal = 2*x(end)/ud;
 
-dt = 0.375;
+dt = 0.1;
 ntstep = 200;
 
 % MAKE RESULTS DIRECTORY

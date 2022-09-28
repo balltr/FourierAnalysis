@@ -1,19 +1,19 @@
 % Creates initial condition for Oblique_Shock_Periodic test case
 % Adds perturbation from eigenvector to base flow state
 
-% close all
+close all
 clearvars
 clc
 
 % change these to match desired input files
-V_filename = 'V_0_upwind_tantheta_1.txt';
-Vcol = 67;
+V_filename = 'V_pi_10_upwind_off_tantheta_25.txt';
+Vcol = 1;
 regular_b0_filename = 'pi_10_b0.grd';
 regular_b1_filename = 'pi_10_b1.grd';
 
 % 0: zero wavenumber
 % 1: any other wavenumber
-kdxSwitch = 0;
+kdxSwitch = 1;
 
 % IC upstream
 gamma = 1.4;
@@ -22,7 +22,7 @@ RTu = 1;
 Mu = 3.0;
 cu = sqrt(gamma*RTu);
 vu = -Mu*cu; % velocity normal to shock
-tantheta = 0.1;
+tantheta = 2.5;
 uu = -vu*tantheta;
 rhou = gamma*pu/(cu^2);
 rhoeu = pu/(gamma-1);
@@ -60,8 +60,8 @@ delete rstrt1_b1.txt
 [x1,y1] = getGrid(rstrt0_b1);
 
 % perturb mesh at interface
-[y0new,rstrt0_b0] = interfaceFun(rstrt0_b0,V,Vcol);
-[y1new,rstrt0_b1] = interfaceFun(rstrt0_b1,V,Vcol);
+[y0new,rstrt0_b0] = interfaceFun(kdxSwitch,rstrt0_b0,V,Vcol);
+[y1new,rstrt0_b1] = interfaceFun(kdxSwitch,rstrt0_b1,V,Vcol);
 
 % perturb flow variables
 rstrt0_d0_b0 = initCond(0,kdxSwitch,rhou,rhou*uu,rhou*vu,rhou*Eu,V,Vcol,x0,y0);
@@ -92,64 +92,84 @@ vExport('rstrt0_v1_b1.txt',x1,y1new)
 
 
 % plot a variable at target x and y to see shape
-xtarget = 0;
+xtarget = 2;
 ytarget = 0;
 ix = find(abs(x1-xtarget)<1e-5);
 iy = find(abs(y1-ytarget)<1e-5);
 
 figure
 tileplot = tiledlayout(2,2);
-title(tileplot,'initial condition at x = ',xtarget)
+% title(tileplot,['Initial Condition at x = ' num2str(xtarget)])
+title(tileplot,'Initial Condition Along Centerline')
 for var = 1:4
     nexttile
-    plot(y1(ix),rstrt0_d0_b1(ix,var),'ko')
-    title('var ',var)
+    temp = rstrt0_d0_b1(ix,var);
+    y1plot = y1(ix);
+    [y1plot,Idx] = sort(y1plot);
+    temp = temp(Idx);
+    plot(y1plot,temp,'k-')
+    if var == 1
+        title('p')
+    elseif var == 2
+        title('u')
+    elseif var == 3
+        title('v')
+    elseif var == 4
+        title('RT')
+    end
     xlabel('y')
 end
-
 figure
 tileplot = tiledlayout(2,2);
-title(tileplot,'initial condition at y = ',ytarget)
+title(tileplot,['Initial Condition at y = ' num2str(ytarget)])
 for var = 1:4
     nexttile
-    plot(x1(iy),rstrt0_d0_b1(iy,var),'ko')
-    title('var ',var)
+    temp = rstrt0_d0_b1(iy,var);
+    x1plot = x1(iy);
+    [x1plot,Idx] = sort(x1plot);
+    temp = temp(Idx);
+    plot(x1plot,temp,'k-')
+    axis auto
+    if var == 1
+        title('p')
+    elseif var == 2
+        title('u')
+    elseif var == 3
+        title('v')
+    elseif var == 4
+        title('RT')
+    end
     xlabel('x')
 end
 
+shockIdx = find(y0<1e-10);
+xshockPlot = x0(shockIdx);
+yshockPlot = y0new(shockIdx);
+[xshockPlot, Idx] = sort(xshockPlot);
+yshockPlot = yshockPlot(Idx);
+figure
+plot(xshockPlot,yshockPlot,'k-')
+title('Interface Perturbation')
+xlabel('x')
+ylabel('y')
 
 
 
 
 
-function [x,y] = getGrid(table)
-npnt = cell2mat(table(1,2));
-x = zeros(npnt,1);
-y = zeros(npnt,1);
-for i = 1:npnt
-    x(i) = cell2mat(table(i+1,2));
-    y(i) = cell2mat(table(i+1,3));
-end
-end
-
-
-function [ynew,table] = interfaceFun(table,V,Vcol)
+function [ynew,table] = interfaceFun(kdxSwitch,table,V,Vcol)
 ynew = zeros(cell2mat(table(1,2)),1);
-% get dx and L from file
-dx = cell2mat(table(6,2));
+x = zeros(length(ynew),1);
 L = cell2mat(table(3,2));
-% interface purturbation amplitude
-A = real(V(end,Vcol));
 for i = 1:cell2mat(table(1,2))
     ynew(i) = cell2mat(table(i+1,3));
+    x(i) = cell2mat(table(i+1,2));
     if ynew(i) == 0
-        % no perturbation - do nothing
-        
-        % uniform perturbation
-        ynew(i) = A;
-        
-        % sin perturbation
-%         ynew(i) = A * sin(2*pi*(cell2mat(table(i+1,2)))/L);
+        if kdxSwitch == 0
+            ynew(i) = 2*real(V(end,Vcol));
+        elseif kdxSwitch == 1
+            ynew(i) = 2*(real(V(end,Vcol))*cos(2*pi*x(i)/L) - imag(V(end,Vcol))*sin(2*pi*x(i)/L));
+        end
     end
     table(i+1,3) = {ynew(i)};
 end
@@ -166,28 +186,44 @@ IC(:,2) = rhou;
 IC(:,3) = rhov;
 IC(:,4) = rhoE;
 
-% perturb block 1
+% perturb block 1 flow
 if block == 1
     figure
     tileplot = tiledlayout(2,2);
     title(tileplot,'conservative variable eigenvectors')
     for var = 1:4
-        realVtemp = real(V(var:4:end-1,Vcol)); % stores eigenvector for current variable
+        realVtemp = real(V(var:4:end-1,Vcol)); % stores real eigenvector component for current variable
+        imagVtemp = imag(V(var:4:end-1,Vcol)); % stores imag eigenvector component for current variable
         nexttile
         plot(realVtemp)
+        hold on
+        plot(imagVtemp)
+        hold off
         title('var ',var)
         xlabel('y')
         realVtemp = flip(realVtemp); % positions shock at index 1
+        imagVtemp = flip(imagVtemp); % positions shock at index 1
         for i = 1:length(x)
             vidx = round(abs(y(i))/dx + 1); % get index for eigenvector
             if kdxSwitch == 0
                 IC(i,var) = IC(i,var) + 2*realVtemp(vidx);
             else
-                IC(i,var) = IC(i,var) + 2*realVtemp(vidx)*cos(2*pi*x(i)/L);
+                IC(i,var) = IC(i,var) ...
+                    + 2*(realVtemp(vidx)*cos(2*pi*x(i)/L) - imagVtemp(vidx)*sin(2*pi*x(i)/L));
             end
-            
         end
     end
+end
+end
+
+
+function [x,y] = getGrid(table)
+npnt = cell2mat(table(1,2));
+x = zeros(npnt,1);
+y = zeros(npnt,1);
+for i = 1:npnt
+    x(i) = cell2mat(table(i+1,2));
+    y(i) = cell2mat(table(i+1,3));
 end
 end
 
