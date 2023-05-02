@@ -212,7 +212,7 @@ clc
 clearvars
 % close all
 
-tanThetaArray = 0:0.2:20;
+tanThetaArray = 0:0.1:10;
 Mu = 3;
 kdx = pi/10;
 domainDepth = pi/abs(kdx)*8;
@@ -223,7 +223,6 @@ for i = 1:length(tanThetaArray)
     shockEigArray(i) = E_vec(1);
 end
 
-
 figure;
 plot(tanThetaArray,(imag(shockEigArray)),'ko')
 title(['k\Deltax = \pi/10,    M = ',num2str(Mu)])
@@ -231,6 +230,12 @@ xlabel('tan(\theta)')
 ylabel('Im(\lambda)')
 grid on
 
+figure;
+plot(tanThetaArray,(real(shockEigArray)),'ko')
+title(['k\Deltax = \pi/10,    M = ',num2str(Mu)])
+xlabel('tan(\theta)')
+ylabel('Re(\lambda)')
+grid on
 
 
 %% Vary kdx
@@ -292,9 +297,68 @@ grid on
 
 
 
+%% tantheta and M Contour Plot (scaling comparison)
+clearvars
+% close all
+
+tanThetaArray = 0:0.1:10;
+MuArray = 1:0.1:10;
+kdx = pi/10;
+domainDepth = pi/abs(kdx)*8;
+
+shockEigArray = zeros(length(tanThetaArray),length(MuArray));
+for i = 1:length(tanThetaArray)
+    for j = 1:length(MuArray)
+        [E_vec,V,uu] = Fourier2DEulerFunction(tanThetaArray(i),MuArray(j),kdx,0,domainDepth);
+        shockEigArray(i,j) = E_vec(1);
+    end
+end
+
+[X,Y] = meshgrid(tanThetaArray,MuArray);
+
+%%
+
+figure;
+contourf(X',Y',imag(shockEigArray))
+title('Im(\lambda),    Not Scaled,    k\Deltax = \pi/10')
+xlabel('tan(\theta)')
+ylabel('M')
+colorbar
 
 
+figure;
+contourf(X',Y',real(shockEigArray))
+title('Re(\lambda),    Not Scaled,    k\Deltax = \pi/10')
+xlabel('tan(\theta)')
+ylabel('M')
+colorbar
 
+
+% scaling
+uMatrix = zeros(length(tanThetaArray),length(MuArray));
+shockEigArrayScaled = zeros(length(tanThetaArray),length(MuArray));
+cu = sqrt(1.4);
+
+for i = 1:length(tanThetaArray)
+    for j = 1:length(MuArray)
+        uMatrix(i,j) = -vMatrix(i,j)*tanThetaArray(i);
+        shockEigArrayScaled(i,j) = shockEigArray(i,j)/(kdx*(uMatrix(i,j)+MuArray(j)*cu));
+    end
+end
+
+figure;
+contourf(X',Y',imag(shockEigArrayScaled))
+title('Im(\lambda),    Scaled,    k\Deltax = \pi/10')
+xlabel('tan(\theta)')
+ylabel('M')
+colorbar
+
+figure;
+contourf(X',Y',real(shockEigArrayScaled))
+title('Re(\lambda),    Scaled,    k\Deltax = \pi/10')
+xlabel('tan(\theta)')
+ylabel('M')
+colorbar
 
 
 

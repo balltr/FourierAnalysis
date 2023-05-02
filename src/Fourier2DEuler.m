@@ -64,7 +64,7 @@ RTu = 1;
 Mu = 3;
 cu = sqrt(gamma*RTu);
 vu = -Mu*cu; % velocity normal to shock
-tantheta = 0;
+tantheta = 1;
 uu = -vu*tantheta;
 rhou = gamma*pu/(cu^2);
 
@@ -96,7 +96,7 @@ adis = 1.0;
 %%%%%%%%%%%%%%%%%% nondimensionalize by dx %%%%%%%%%%%%%%%%%%
 dx = 1.0;
 dy = 1.0;
-y = 0:dy:20;
+y = 0:dy:59;
 Ny = length(y);
 absAe = Ve*abs(Ee)*inv(Ve);
 absAf = Vf*abs(Ef)*inv(Vf);
@@ -142,8 +142,8 @@ elseif wavenumSwitch == 1
 %     kdxArray = [-eigPair, eigPair, -eigPair2, eigPair2];
     kdxArray = [-eigPair, eigPair];
 elseif wavenumSwitch == 2
-%     kdxArray = pi/10;
-    kdxArray = 0;
+    kdxArray = pi/10;
+%     kdxArray = 0;
 end
 
 CM = turbo(length(kdxArray));
@@ -151,13 +151,13 @@ colorIdx = 0;
 
 for ii = 1:length(kdxArray)
     kdx = kdxArray(ii);
-%     %%%%%%%%%%%%%%%%%%% nondimensionalize by kdx %%%%%%%%%%%%%%%%%%
+%     %%%%%%%%%%%%%%%%%% nondimensionalize by kdx %%%%%%%%%%%%%%%%%%
 %     dx = abs(kdx/(2*pi));
 %     dy = dx;
 %     Ny = round(4/dy+1,0);
 %     absAe = dx*Ve*abs(Ee)*inv(Ve);
 %     absAf = dy*Vf*abs(Ef)*inv(Vf);
-%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     colorIdx = colorIdx + 1;
     
